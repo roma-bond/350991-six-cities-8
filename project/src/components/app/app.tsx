@@ -1,22 +1,27 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import Main from '../main/main';
 import SignIn from '../sign-in/sign-in';
 import Favorites from '../favorites/favorites';
 import Room from '../room/room';
 import NotFound from '../not-found/not-found';
 import PrivateRoute from '../private-route/private-route';
+import { Offer } from '../../types/offer';
 
 type AppProps = {
-  offersAmount: number,
+  offersAmount: number;
+  offers: Offer[];
 }
 
-function App({offersAmount}: AppProps): JSX.Element {
+function App({ offersAmount, offers }: AppProps): JSX.Element {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path={AppRoute.Root}>
-          <Main offersAmount={offersAmount} />
+          <Main
+            offersAmount={offersAmount}
+            offers={offers}
+          />
         </Route>
         <Route exact path={AppRoute.Login}>
           <SignIn />
@@ -24,13 +29,11 @@ function App({offersAmount}: AppProps): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.Favorites}
-          render={() => <Favorites />}
-          authorizationStatus={AuthorizationStatus.NoAuth}
+          render={() => <Favorites offers={offers} page='favorites' />}
+          authorizationStatus={AuthorizationStatus.Auth}
         >
         </PrivateRoute>
-        <Route exact path={AppRoute.Offer}>
-          <Room />
-        </Route>
+        <Route exact path={`${AppRoute.Offer}/:id`} component={Room} />
         <Route>
           <NotFound />
         </Route>

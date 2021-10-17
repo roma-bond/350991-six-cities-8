@@ -23,6 +23,10 @@ export const offers: Offer[] = [{
     pro: true,
   },
   facilities: ['Wi-Fi', 'Heating', 'Kitchen', 'Fridge', 'Washing machine', 'Coffee machine', 'Dishwasher', 'Towels', 'Baby seat', 'Cabel TV'],
+  coordinates: {
+    lat: 52.3909553943508,
+    lng: 4.85309666406198,
+  },
 }, {
   id: 2,
   images: [
@@ -45,6 +49,10 @@ export const offers: Offer[] = [{
     pro: false,
   },
   facilities: ['Wi-Fi', 'Heating', 'Fridge', 'Towels', 'Baby seat', 'Cabel TV'],
+  coordinates: {
+    lat: 52.369553943508,
+    lng: 4.85309666406198,
+  },
 }, {
   id: 3,
   images: [
@@ -67,6 +75,10 @@ export const offers: Offer[] = [{
     pro: true,
   },
   facilities: ['Wi-Fi', 'Heating', 'Kitchen', 'Fridge', 'Washing machine', 'Dishwasher', 'Towels', 'Baby seat', 'Cabel TV'],
+  coordinates: {
+    lat: 52.3909553943508,
+    lng: 4.929309666406198,
+  },
 }, {
   id: 4,
   images: [
@@ -88,4 +100,8 @@ export const offers: Offer[] = [{
     pro: false,
   },
   facilities: ['Wi-Fi', 'Kitchen', 'Fridge', 'Washing machine', 'Coffee machine', 'Towels', 'Cabel TV'],
+  coordinates: {
+    lat: 52.3809553943508,
+    lng: 4.939309666406198,
+  },
 }];

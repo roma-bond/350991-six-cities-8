@@ -1,13 +1,15 @@
-import { useState  } from 'react';
+import { useState } from 'react';
 import OfferCard from '../offer-card/offer-card';
 import { Offer } from '../../types/offer';
 
 type OffersListProps = {
   offers: Offer[];
+  onListItemHover: (listItemId: number) => void;
 }
 
-function OffersList({ offers }: OffersListProps): JSX.Element {
+function OffersList({ offers, onListItemHover }: OffersListProps): JSX.Element {
   const [, setActiveId] = useState(offers[0].id);
+
   return (
     <div className="cities__places-list places__list tabs__content">
       {
@@ -16,6 +18,7 @@ function OffersList({ offers }: OffersListProps): JSX.Element {
             key={offer.id}
             offer={offer}
             onMouseOver={() => setActiveId(offer.id)}
+            onMouseEnter={() => onListItemHover(offer.id)}
             page='main'
           />),
         )

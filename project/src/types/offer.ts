@@ -1,3 +1,5 @@
+import { Coordinates } from './map';
+
 export type Offer = {
   id: number,
   images: string[],
@@ -16,6 +18,7 @@ export type Offer = {
     pro: boolean
   },
   facilities: string[]
+  coordinates: Coordinates,
 };
 
 export type Review = {

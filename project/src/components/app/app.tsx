@@ -6,6 +6,7 @@ import Favorites from '../favorites/favorites';
 import Room from '../room/room';
 import NotFound from '../not-found/not-found';
 import PrivateRoute from '../private-route/private-route';
+import { CITY } from '../../mocks/city';
 import { Offer } from '../../types/offer';
 
 type AppProps = {
@@ -21,6 +22,7 @@ function App({ offersAmount, offers }: AppProps): JSX.Element {
           <Main
             offersAmount={offersAmount}
             offers={offers}
+            city={CITY}
           />
         </Route>
         <Route exact path={AppRoute.Login}>

@@ -8,6 +8,16 @@ type FavoritesProps = {
 }
 
 function Favorites({ offers, page }: FavoritesProps): JSX.Element {
+  const getFavorites = () =>
+    offers.filter((offer) => offer.favorite)
+      .map((offer) => (
+        <OfferCard
+          key={offer.id}
+          offer={offer}
+          page='favorites'
+        />),
+      );
+
   return (
     <div className="page">
       <header className="header">
@@ -52,16 +62,7 @@ function Favorites({ offers, page }: FavoritesProps): JSX.Element {
                   </div>
                 </div>
                 <div className="favorites__places">
-                  {
-                    offers.filter((offer) => offer.favorite)
-                      .map((offer) => (
-                        <OfferCard
-                          key={offer.id}
-                          offer={offer}
-                          page='favorites'
-                        />),
-                      )
-                  }
+                  {getFavorites()}
                 </div>
               </li>
 
@@ -74,16 +75,7 @@ function Favorites({ offers, page }: FavoritesProps): JSX.Element {
                   </div>
                 </div>
                 <div className="favorites__places">
-                  {
-                    offers.filter((offer) => offer.favorite)
-                      .map((offer) => (
-                        <OfferCard
-                          key={offer.id}
-                          offer={offer}
-                          page='favorites'
-                        />),
-                      )
-                  }
+                  {getFavorites()}
                 </div>
               </li>
             </ul>

@@ -1,3 +1,4 @@
+import { MouseEvent  } from 'react';
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
 import { Offer } from '../../types/offer';
@@ -5,11 +6,12 @@ import { Offer } from '../../types/offer';
 type OfferCardProps = {
   offer: Offer;
   onMouseOver?: () => void;
+  onMouseEnter?: (event: MouseEvent<HTMLLIElement>) => void;
   page: string;
 }
 
 function OfferCard(props: OfferCardProps): JSX.Element {
-  const { offer, onMouseOver, page } = props;
+  const { offer, onMouseOver, onMouseEnter, page } = props;
   const bookmarkButtonClass = offer.favorite ? 'place-card__bookmark-button place-card__bookmark-button--active button' : 'place-card__bookmark-button button';
 
   let placeCardExtraClass = 'cities__place-card';
@@ -27,7 +29,7 @@ function OfferCard(props: OfferCardProps): JSX.Element {
   }
 
   return (
-    <article className={`${placeCardExtraClass} place-card`} onMouseOver={onMouseOver}>
+    <article onMouseEnter={onMouseEnter} className={`${placeCardExtraClass} place-card`} onMouseOver={onMouseOver}>
       { offer.premium &&
         <div className="place-card__mark">
           <span>Premium</span>

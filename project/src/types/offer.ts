@@ -22,6 +22,7 @@ export type Offer = {
 };
 
 export type Review = {
+  id: number,
   avatar: string,
   authorName: string,
   rating: number,

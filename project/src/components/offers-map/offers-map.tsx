@@ -3,29 +3,51 @@ import {Marker, Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { City, Point } from '../../types/map';
 import useMap from '../../hooks/useMap';
-import {URL_MARKER_DEFAULT, URL_MARKER_CURRENT} from '../../const';
 
 type MapProps = {
   city: City;
   points: Point[];
-  selectedPoint: Point | undefined;
+  selectedPoint: Point | null | undefined;
+  fixedOfferMarkerId?: number;
 }
 
 const defaultCustomIcon = new Icon({
-  iconUrl: URL_MARKER_DEFAULT,
+  iconUrl: 'img/pin.svg',
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
 const currentCustomIcon = new Icon({
-  iconUrl: URL_MARKER_CURRENT,
+  iconUrl: 'img/pin-active.svg',
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
-function Map({ city, points, selectedPoint }: MapProps): JSX.Element {
+const fixedIcon = new Icon({
+  iconUrl: 'img/pin-active.svg',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
+
+function OffersMap({ city, points, selectedPoint, fixedOfferMarkerId }: MapProps): JSX.Element {
   const mapRef = useRef(null);
   const map = useMap(mapRef, city);
+
+  if (fixedOfferMarkerId && map) {
+    points = points.filter((point) => {
+      if (point.id === fixedOfferMarkerId) {
+        const marker = new Marker({
+          lat: point.lat,
+          lng: point.lng,
+        });
+
+        marker
+          .setIcon(fixedIcon)
+          .addTo(map);
+      }
+      return point.id !== fixedOfferMarkerId;
+    });
+  }
 
   useEffect(() => {
     if (map) {
@@ -36,11 +58,7 @@ function Map({ city, points, selectedPoint }: MapProps): JSX.Element {
         });
 
         marker
-          .setIcon(
-            selectedPoint !== undefined && point.id === selectedPoint.id
-              ? currentCustomIcon
-              : defaultCustomIcon,
-          )
+          .setIcon(selectedPoint && point.id === selectedPoint.id ? currentCustomIcon : defaultCustomIcon)
           .addTo(map);
       });
     }
@@ -55,4 +73,4 @@ function Map({ city, points, selectedPoint }: MapProps): JSX.Element {
   );
 }
 
-export default Map;
+export default OffersMap;

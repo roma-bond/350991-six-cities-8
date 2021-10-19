@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import { Offer } from '../../types/offer';
 import OffersList from '../offers-list/offers-list';
-import Map from '../map/map';
+import OffersMap from '../offers-map/offers-map';
 import { City, Point } from '../../types/map';
 
 type MainProps = {
@@ -11,7 +11,7 @@ type MainProps = {
 }
 
 function Main({ offersAmount, offers, city }: MainProps): JSX.Element {
-  const [selectedPoint, setSelectedPoint] = useState<Point | undefined>(undefined);
+  const [selectedPoint, setSelectedPoint] = useState<Point | null | undefined>(null);
 
   const points = offers.map((offer) => {
     const { id } = offer;
@@ -115,11 +115,12 @@ function Main({ offersAmount, offers, city }: MainProps): JSX.Element {
               <OffersList
                 offers={offers}
                 onListItemHover={onListItemHover}
+                offersListType={'main'}
               />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                <Map
+                <OffersMap
                   city={city}
                   points={points}
                   selectedPoint={selectedPoint}

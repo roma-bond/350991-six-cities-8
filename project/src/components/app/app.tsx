@@ -35,7 +35,11 @@ function App({ offersAmount, offers }: AppProps): JSX.Element {
           authorizationStatus={AuthorizationStatus.Auth}
         >
         </PrivateRoute>
-        <Route exact path={`${AppRoute.Offer}/:id`} component={Room} />
+        <Route
+          exact
+          path={`${AppRoute.Offer}/:id`}
+          render={(routeProps) => <Room {...routeProps} city={CITY} />}
+        />
         <Route>
           <NotFound />
         </Route>

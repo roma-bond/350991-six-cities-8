@@ -7,11 +7,12 @@ type OfferCardProps = {
   offer: Offer;
   onMouseOver?: () => void;
   onMouseEnter?: (event: MouseEvent<HTMLLIElement>) => void;
+  onMouseOut?: () => void;
   page: string;
 }
 
 function OfferCard(props: OfferCardProps): JSX.Element {
-  const { offer, onMouseOver, onMouseEnter, page } = props;
+  const { offer, onMouseOver, onMouseEnter, onMouseOut, page } = props;
   const bookmarkButtonClass = offer.favorite ? 'place-card__bookmark-button place-card__bookmark-button--active button' : 'place-card__bookmark-button button';
 
   let placeCardExtraClass = 'cities__place-card';
@@ -26,10 +27,13 @@ function OfferCard(props: OfferCardProps): JSX.Element {
     cardInfoExtraClass = 'favorites__card-info';
     imageWidth = 150;
     imageHeight = 110;
+  } else if (page === 'offer') {
+    placeCardExtraClass = 'near-places__card';
+    imageWrapperExtraClass = 'near-places__image-wrapper';
   }
 
   return (
-    <article onMouseEnter={onMouseEnter} className={`${placeCardExtraClass} place-card`} onMouseOver={onMouseOver}>
+    <article onMouseEnter={onMouseEnter} onMouseOut={onMouseOut} className={`${placeCardExtraClass} place-card`} onMouseOver={onMouseOver}>
       { offer.premium &&
         <div className="place-card__mark">
           <span>Premium</span>

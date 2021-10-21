@@ -1,17 +1,40 @@
-import {useState} from 'react';
-import { Offer } from '../../types/offer';
+import { useState, useEffect } from 'react';
+import { bindActionCreators, Dispatch } from 'redux';
+import { connect, ConnectedProps } from 'react-redux';
+import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
+import { updateOffers } from '../../store/action';
 import { City, Point } from '../../types/map';
+import { Actions } from '../../types/action';
+import { State } from '../../types/state';
+import { CITIES } from '../../const';
 
 type MainProps = {
   offersAmount: number;
-  offers: Offer[];
   city: City;
 }
 
-function Main({ offersAmount, offers, city }: MainProps): JSX.Element {
-  const [selectedPoint, setSelectedPoint] = useState<Point | null | undefined>(null);
+const mapStateToProps = ({ offers, city }: State) => ({
+  offers,
+  activeCity: city,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<Actions>) => bindActionCreators({
+  onUpdateOffers: updateOffers,
+}, dispatch);
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & MainProps;
+
+function Main({ offersAmount, city, activeCity, offers, onUpdateOffers }: ConnectedComponentProps): JSX.Element {
+  const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
+
+  useEffect(() => {
+    onUpdateOffers(activeCity);
+  }, [activeCity]);
 
   const points = offers.map((offer) => {
     const { id } = offer;
@@ -19,7 +42,7 @@ function Main({ offersAmount, offers, city }: MainProps): JSX.Element {
   });
 
   const onListItemHover = (listItemId: number) => {
-    const currentPoint = points.find((point) => point.id === listItemId);
+    const currentPoint = points.find((point) => point.id === listItemId) || null;
 
     setSelectedPoint(currentPoint);
   };
@@ -58,45 +81,14 @@ function Main({ offersAmount, offers, city }: MainProps): JSX.Element {
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
           <section className="locations container">
-            <ul className="locations__list tabs__list">
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Paris</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Cologne</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Brussels</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item tabs__item--active">
-                  <span>Amsterdam</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Hamburg</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Dusseldorf</span>
-                </a>
-              </li>
-            </ul>
+            <CitiesList cities={CITIES} />
           </section>
         </div>
         <div className="cities">
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersAmount} places to stay in Amsterdam</b>
+              <b className="places__found">{offersAmount} places to stay in {activeCity}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -134,4 +126,5 @@ function Main({ offersAmount, offers, city }: MainProps): JSX.Element {
   );
 }
 
-export default Main;
+export { Main };
+export default connector(Main);

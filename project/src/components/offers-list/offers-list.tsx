@@ -10,7 +10,7 @@ type OffersListProps = {
 }
 
 function OffersList({ offers, onListItemHover, offersListType, onListItemOut }: OffersListProps): JSX.Element {
-  const [, setActiveId] = useState(offers[0].id);
+  const [, setActiveId] = useState(offers.length > 0 ? offers[0].id : null);
 
   let extraListClass = '';
 

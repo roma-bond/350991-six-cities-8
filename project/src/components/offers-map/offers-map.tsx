@@ -7,7 +7,7 @@ import useMap from '../../hooks/useMap';
 type MapProps = {
   city: City;
   points: Point[];
-  selectedPoint: Point | null | undefined;
+  selectedPoint: Point | null;
   fixedOfferMarkerId?: number;
 }
 

@@ -21,7 +21,6 @@ function App({ offersAmount, offers }: AppProps): JSX.Element {
         <Route exact path={AppRoute.Root}>
           <Main
             offersAmount={offersAmount}
-            offers={offers}
             city={CITY}
           />
         </Route>

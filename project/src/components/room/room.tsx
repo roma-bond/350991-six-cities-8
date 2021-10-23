@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../types/offer';
-// import { City, Point } from '../../types/map';
 import { Point } from '../../types/map';
 import { offers } from '../../mocks/offers';
 import { reviews } from '../../mocks/reviews';
@@ -22,12 +21,12 @@ function Room(props: any): JSX.Element {
     return {id, ...offer.coordinates};
   });
 
-  const offerPoint = points.find((point) => point.id === currentOffer.id);
+  const offerPoint = points.find((point) => point.id === currentOffer.id) || null;
 
-  const [selectedPoint, setSelectedPoint] = useState<Point | undefined | null>(offerPoint);
+  const [selectedPoint, setSelectedPoint] = useState<Point | null>(offerPoint);
 
   const onListItemHover = (listItemId: number) => {
-    const currentPoint = points.find((point) => point.id === listItemId);
+    const currentPoint = points.find((point) => point.id === listItemId) || null;
     setSelectedPoint(currentPoint);
   };
 

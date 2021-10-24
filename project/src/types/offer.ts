@@ -2,6 +2,7 @@ import { Coordinates } from './map';
 
 export type Offer = {
   id: number,
+  city: string,
   images: string[],
   premium: boolean,
   price: number,

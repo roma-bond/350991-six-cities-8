@@ -1,8 +1,8 @@
 import CityTab from '../city-tab/city-tab';
-import { bindActionCreators, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
 import { changeCity } from '../../store/action';
-import { Actions } from '../../types/action';
+import { ChangeCityAction } from '../../types/action';
 import { State } from '../../types/state';
 
 type CitiesListProps = {
@@ -13,9 +13,11 @@ const mapStateToProps = ({ city }: State) => ({
   activeCity: city,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<Actions>) => bindActionCreators({
-  onChangeCity: changeCity,
-}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch<ChangeCityAction>) => ({
+  onChangeCity(city: string) {
+    dispatch(changeCity(city));
+  },
+});
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 

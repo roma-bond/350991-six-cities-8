@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import { bindActionCreators, Dispatch } from 'redux';
+import { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import OffersSorting from '../offers-sorting/offers-sorting';
 import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
-import { updateOffers } from '../../store/action';
+import { getSortedOffers } from '../../store-utilities/offers';
 import { City, Point } from '../../types/map';
-import { Actions } from '../../types/action';
 import { State } from '../../types/state';
 import { CITIES } from '../../const';
 
@@ -15,28 +14,23 @@ type MainProps = {
   city: City;
 }
 
-const mapStateToProps = ({ offers, city }: State) => ({
-  offers,
+const mapStateToProps = ({ city, offers, sortBy }: State) => ({
   activeCity: city,
+  offers,
+  sortBy,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<Actions>) => bindActionCreators({
-  onUpdateOffers: updateOffers,
-}, dispatch);
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & MainProps;
 
-function Main({ offersAmount, city, activeCity, offers, onUpdateOffers }: ConnectedComponentProps): JSX.Element {
+function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedComponentProps): JSX.Element {
+  // const [displayedOffers, setDisplayedOffers] = useState<Offer[]>(offers);
+  const displayedOffers = getSortedOffers(activeCity, offers, sortBy);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
-  useEffect(() => {
-    onUpdateOffers(activeCity);
-  }, [activeCity]);
-
-  const points = offers.map((offer) => {
+  const points = displayedOffers.map((offer) => {
     const { id } = offer;
     return {id, ...offer.coordinates};
   });
@@ -46,6 +40,12 @@ function Main({ offersAmount, city, activeCity, offers, onUpdateOffers }: Connec
 
     setSelectedPoint(currentPoint);
   };
+
+  // useEffect(() => {
+  //   const sortedOffers = getSortedOffers(activeCity, offers, sortBy);
+
+  //   setDisplayedOffers(sortedOffers);
+  // }, [activeCity, offers, sortBy]);
 
   return (
     <div className="page page--gray page--main">
@@ -89,23 +89,9 @@ function Main({ offersAmount, city, activeCity, offers, onUpdateOffers }: Connec
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">{offersAmount} places to stay in {activeCity}</b>
-              <form className="places__sorting" action="#" method="get">
-                <span className="places__sorting-caption">Sort by</span>
-                <span className="places__sorting-type" tabIndex={0}>
-                  Popular
-                  <svg className="places__sorting-arrow" width="7" height="4">
-                    <use xlinkHref="#icon-arrow-select"></use>
-                  </svg>
-                </span>
-                <ul className="places__options places__options--custom places__options--opened">
-                  <li className="places__option places__option--active" tabIndex={0}>Popular</li>
-                  <li className="places__option" tabIndex={0}>Price: low to high</li>
-                  <li className="places__option" tabIndex={0}>Price: high to low</li>
-                  <li className="places__option" tabIndex={0}>Top rated first</li>
-                </ul>
-              </form>
+              <OffersSorting />
               <OffersList
-                offers={offers}
+                offers={displayedOffers}
                 onListItemHover={onListItemHover}
                 offersListType={'main'}
               />

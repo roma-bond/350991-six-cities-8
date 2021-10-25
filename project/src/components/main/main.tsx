@@ -26,7 +26,6 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & MainProps;
 
 function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedComponentProps): JSX.Element {
-  // const [displayedOffers, setDisplayedOffers] = useState<Offer[]>(offers);
   const displayedOffers = getSortedOffers(activeCity, offers, sortBy);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
@@ -40,12 +39,6 @@ function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedCompo
 
     setSelectedPoint(currentPoint);
   };
-
-  // useEffect(() => {
-  //   const sortedOffers = getSortedOffers(activeCity, offers, sortBy);
-
-  //   setDisplayedOffers(sortedOffers);
-  // }, [activeCity, offers, sortBy]);
 
   return (
     <div className="page page--gray page--main">

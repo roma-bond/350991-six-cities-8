@@ -1,19 +1,40 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { History } from 'history';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { connect, ConnectedProps } from 'react-redux';
 import { Offer } from '../../types/offer';
 import { Point } from '../../types/map';
-import { offers } from '../../mocks/offers';
 import { reviews } from '../../mocks/reviews';
 import CommentForm from '../comment-form/comment-form';
 import ReviewsList from '../reviews-list/reviews-list';
 import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
+import { State } from '../../types/state';
+import { City } from '../../types/map';
 
-function Room(props: any): JSX.Element {
-  const currentOffer: any = offers.find((offer: Offer) => offer.id === +props.match.params.id);
+interface MatchParams {
+  id: string;
+}
+
+interface RoomProps extends RouteComponentProps<MatchParams> {
+  city: City;
+  history: History;
+}
+
+const mapStateToProps = ({ offers }: State) => ({
+  offers,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & RoomProps;
+
+function Room({ history, match, offers, city }: ConnectedComponentProps): JSX.Element {
+  const currentOffer: any = offers.find((offer: Offer) => offer.id === +match.params.id);
 
   if (!currentOffer) {
-    props.history.push('/');
+    history.push('/');
   }
 
   const points = offers.map((offer) => {
@@ -153,7 +174,7 @@ function Room(props: any): JSX.Element {
           </div>
           <section className="property__map map">
             <OffersMap
-              city={props.city}
+              city={city}
               points={points}
               selectedPoint={selectedPoint}
               fixedOfferMarkerId={currentOffer.id}
@@ -176,4 +197,5 @@ function Room(props: any): JSX.Element {
   );
 }
 
-export default Room;
+export { Room };
+export default connector(Room);

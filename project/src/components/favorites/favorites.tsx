@@ -1,20 +1,29 @@
+import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
 import OfferCard from '../offer-card/offer-card';
-import { Offer } from '../../types/offer';
+import { State } from '../../types/state';
 
 type FavoritesProps = {
-  offers: Offer[];
   page: string;
 }
 
-function Favorites({ offers, page }: FavoritesProps): JSX.Element {
+const mapStateToProps = ({ offers }: State) => ({
+  offers,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & FavoritesProps;
+
+function Favorites({ offers, page }: ConnectedComponentProps): JSX.Element {
   const getFavorites = () =>
     offers.filter((offer) => offer.favorite)
       .map((offer) => (
         <OfferCard
           key={offer.id}
           offer={offer}
-          page='favorites'
+          page={page}
         />),
       );
 
@@ -91,4 +100,5 @@ function Favorites({ offers, page }: FavoritesProps): JSX.Element {
   );
 }
 
-export default Favorites;
+export { Favorites };
+export default connector(Favorites);

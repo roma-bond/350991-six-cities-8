@@ -62,7 +62,7 @@ function OffersMap({ city, points, selectedPoint, fixedOfferMarkerId }: MapProps
           .addTo(map);
       });
     }
-  }, [map, points, selectedPoint]);
+  }, [city, map, points, selectedPoint]);
 
   return (
     <div

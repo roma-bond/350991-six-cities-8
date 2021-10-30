@@ -6,7 +6,7 @@ type CityTabProps = {
   onClickHandler: (city: string) => void
 }
 
-function CityTab({ city, classValue, onClickHandler }: CityTabProps) {
+function CityTab({ city, classValue, onClickHandler }: CityTabProps): JSX.Element {
   const handleClick = (e: MouseEvent) => {
     e.preventDefault();
     onClickHandler(city);

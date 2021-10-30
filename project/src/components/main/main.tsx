@@ -4,15 +4,10 @@ import OffersSorting from '../offers-sorting/offers-sorting';
 import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
-import { getSortedOffers } from '../../store-utilities/offers';
+import { getSortedOffers, getCityMapCoordinates } from '../../store-utilities/offers';
 import { City, Point } from '../../types/map';
 import { State } from '../../types/state';
 import { CITIES } from '../../const';
-
-type MainProps = {
-  offersAmount: number;
-  city: City;
-}
 
 const mapStateToProps = ({ city, offers, sortBy }: State) => ({
   activeCity: city,
@@ -23,10 +18,11 @@ const mapStateToProps = ({ city, offers, sortBy }: State) => ({
 const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & MainProps;
 
-function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedComponentProps): JSX.Element {
+function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
   const displayedOffers = getSortedOffers(activeCity, offers, sortBy);
+  const cityMapCoordinates: City = getCityMapCoordinates(activeCity, offers);
+
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
   const points = displayedOffers.map((offer) => {
@@ -81,7 +77,7 @@ function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedCompo
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersAmount} places to stay in {activeCity}</b>
+              <b className="places__found">{offers.length} places to stay in {activeCity}</b>
               <OffersSorting />
               <OffersList
                 offers={displayedOffers}
@@ -92,7 +88,7 @@ function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedCompo
             <div className="cities__right-section">
               <section className="cities__map map">
                 <OffersMap
-                  city={city}
+                  city={cityMapCoordinates}
                   points={points}
                   selectedPoint={selectedPoint}
                 />

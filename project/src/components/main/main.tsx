@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import OffersSorting from '../offers-sorting/offers-sorting';
 import CitiesList from '../cities-list/cities-list';
@@ -20,8 +20,9 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
-  const displayedOffers = getSortedOffers(activeCity, offers, sortBy);
-  const cityMapCoordinates: City = getCityMapCoordinates(activeCity, offers);
+  let displayedOffers = getSortedOffers(activeCity, offers, sortBy);
+  let cityMapCoordinates: City = getCityMapCoordinates(activeCity, offers);
+  let cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
 
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
@@ -29,6 +30,12 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
     const { id } = offer;
     return {id, ...offer.coordinates};
   });
+
+  useEffect(() => {
+    displayedOffers = getSortedOffers(activeCity, offers, sortBy);
+    cityMapCoordinates = getCityMapCoordinates(activeCity, offers);
+    cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
+  }, [offers, activeCity]);
 
   const onListItemHover = (listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;
@@ -77,7 +84,7 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offers.length} places to stay in {activeCity}</b>
+              <b className="places__found">{cityOffersAmount} places to stay in {activeCity}</b>
               <OffersSorting />
               <OffersList
                 offers={displayedOffers}

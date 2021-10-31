@@ -12,6 +12,16 @@ const convertServerData = (data: any) => data.map((serverOffer: any) => ({
     lat: serverOffer.location.latitude,
     lng: serverOffer.location.longitude,
   },
+  facilities: serverOffer.goods,
+  favorite: serverOffer.is_favorite,
+  premium: serverOffer.is_premium,
+  maxGuests: serverOffer.max_adults,
+  host: {
+    id: serverOffer.host.id,
+    image: serverOffer.host.avatar_url,
+    fullName: serverOffer.host.name,
+    pro: serverOffer.host.is_pro,
+  },
 }));
 
 export const fetchOffersAction = (): ThunkActionResult =>

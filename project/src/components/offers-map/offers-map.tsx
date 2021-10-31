@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import {Marker, Icon} from 'leaflet';
+import { Marker, Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { City, Point } from '../../types/map';
 import useMap from '../../hooks/useMap';
@@ -31,7 +31,7 @@ const fixedIcon = new Icon({
 
 function OffersMap({ city, points, selectedPoint, fixedOfferMarkerId }: MapProps): JSX.Element {
   const mapRef = useRef(null);
-  const map = useMap(mapRef, city);
+  const map = useMap(mapRef, city, selectedPoint);
 
   if (fixedOfferMarkerId && map) {
     points = points.filter((point) => {

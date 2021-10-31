@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { History } from 'history';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { Offer } from '../../types/offer';
 import { Point } from '../../types/map';
@@ -18,7 +17,6 @@ interface MatchParams {
 
 interface RoomProps extends RouteComponentProps<MatchParams> {
   city: City;
-  history: History;
 }
 
 const mapStateToProps = ({ offers }: State) => ({
@@ -30,8 +28,10 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RoomProps;
 
-function Room({ history, match, offers, city }: ConnectedComponentProps): JSX.Element {
+function Room({ match, offers, city }: ConnectedComponentProps): JSX.Element {
   const currentOffer: any = offers.find((offer: Offer) => offer.id === +match.params.id);
+
+  const history = useHistory();
 
   if (!currentOffer) {
     history.push('/');
@@ -175,7 +175,7 @@ function Room({ history, match, offers, city }: ConnectedComponentProps): JSX.El
           <section className="property__map map">
             <OffersMap
               city={city}
-              points={points}
+              points={points.slice(0, 3)}
               selectedPoint={selectedPoint}
               fixedOfferMarkerId={currentOffer.id}
             />
@@ -185,7 +185,7 @@ function Room({ history, match, offers, city }: ConnectedComponentProps): JSX.El
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <OffersList
-              offers={offers.filter((offer) => offer.id !== currentOffer.id)}
+              offers={offers.filter((offer) => offer.id !== currentOffer.id).slice(0, 3)}
               onListItemHover={onListItemHover}
               offersListType={'offer'}
               onListItemOut={onListItemOut}

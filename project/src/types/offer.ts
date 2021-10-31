@@ -21,6 +21,7 @@ export type Offer = {
   bedrooms: number,
   maxGuests: number,
   host: {
+    id: number,
     image: string,
     fullName: string,
     pro: boolean

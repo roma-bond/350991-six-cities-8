@@ -8,6 +8,7 @@ export type City = {
 export type Coordinates = {
   lat: number,
   lng: number,
+  zoom: number,
 }
 
 export type Point = Coordinates & {

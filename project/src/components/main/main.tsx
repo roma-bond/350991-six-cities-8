@@ -1,18 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import OffersSorting from '../offers-sorting/offers-sorting';
 import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
-import { getSortedOffers } from '../../store-utilities/offers';
+import { getSortedOffers, getCityMapCoordinates } from '../../store-utilities/offers';
 import { City, Point } from '../../types/map';
 import { State } from '../../types/state';
 import { CITIES } from '../../const';
-
-type MainProps = {
-  offersAmount: number;
-  city: City;
-}
 
 const mapStateToProps = ({ city, offers, sortBy }: State) => ({
   activeCity: city,
@@ -23,16 +18,24 @@ const mapStateToProps = ({ city, offers, sortBy }: State) => ({
 const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & MainProps;
 
-function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedComponentProps): JSX.Element {
-  const displayedOffers = getSortedOffers(activeCity, offers, sortBy);
+function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
+  let displayedOffers = getSortedOffers(activeCity, offers, sortBy);
+  let cityMapCoordinates: City = getCityMapCoordinates(activeCity, offers);
+  let cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
+
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
   const points = displayedOffers.map((offer) => {
     const { id } = offer;
     return {id, ...offer.coordinates};
   });
+
+  useEffect(() => {
+    displayedOffers = getSortedOffers(activeCity, offers, sortBy);
+    cityMapCoordinates = getCityMapCoordinates(activeCity, offers);
+    cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
+  }, [offers, activeCity]);
 
   const onListItemHover = (listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;
@@ -81,7 +84,7 @@ function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedCompo
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersAmount} places to stay in {activeCity}</b>
+              <b className="places__found">{cityOffersAmount} places to stay in {activeCity}</b>
               <OffersSorting />
               <OffersList
                 offers={displayedOffers}
@@ -92,7 +95,7 @@ function Main({ offersAmount, city, activeCity, offers, sortBy }: ConnectedCompo
             <div className="cities__right-section">
               <section className="cities__map map">
                 <OffersMap
-                  city={city}
+                  city={cityMapCoordinates}
                   points={points}
                   selectedPoint={selectedPoint}
                 />

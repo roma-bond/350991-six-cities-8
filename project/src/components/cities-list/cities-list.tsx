@@ -24,7 +24,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & CitiesListProps;
 
-function CitiesList({ cities, activeCity, onChangeCity }: ConnectedComponentProps) {
+function CitiesList({ cities, activeCity, onChangeCity }: ConnectedComponentProps): JSX.Element {
   const classValue = 'locations__item-link tabs__item';
   const activeClassValue = 'locations__item-link tabs__item tabs__item--active';
 

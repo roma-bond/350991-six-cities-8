@@ -26,3 +26,9 @@ export const CITIES = [
   'Hamburg',
   'Dusseldorf',
 ];
+
+export enum APIRoute {
+  Offers = '/hotels',
+  Login = '/login',
+  Logout = '/logout',
+}

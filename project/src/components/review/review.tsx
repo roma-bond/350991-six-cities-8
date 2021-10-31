@@ -4,7 +4,7 @@ type ReviewPostProps = {
   review: Review;
 }
 
-function ReviewPost ({ review }: ReviewPostProps) {
+function ReviewPost ({ review }: ReviewPostProps): JSX.Element {
   return (
     <li key={`${review.id}-${review.avatar}`} className="reviews__item">
       <div className="reviews__user user">

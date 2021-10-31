@@ -3,6 +3,7 @@ import { updateSorting } from '../../store/action';
 import { sortOffersBy } from '../../const';
 import { Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
+import OffersSortingOption from '../offers-sorting-option/offers-sorting-option';
 import { UpdateSortingAction } from '../../types/action';
 
 const mapDispatchToProps = (dispatch: Dispatch<UpdateSortingAction>) => ({
@@ -18,11 +19,16 @@ type ConnectedComponentProps = PropsFromRedux;
 
 function OffersSorting({ onUpdateSorting }: ConnectedComponentProps): JSX.Element {
   const [activeSortType, setActiveSortType] = useState(sortOffersBy.popular);
-  const activeClassName = ' places__option--active';
 
   useEffect(() => {
     onUpdateSorting(activeSortType);
   }, [activeSortType]);
+
+  const onClickHandler = (sortType: sortOffersBy, isNotActiveOption: boolean) => {
+    if (isNotActiveOption) {
+      setActiveSortType(sortType);
+    }
+  };
 
   return (
     <form className="places__sorting" action="#" method="get">
@@ -35,26 +41,14 @@ function OffersSorting({ onUpdateSorting }: ConnectedComponentProps): JSX.Elemen
       </span>
       <ul className="places__options places__options--custom places__options--opened">
         {
-          Object.values(sortOffersBy).map((sortType) => {
-            let classValue = 'places__option';
-            if (sortType === activeSortType) {
-              classValue += activeClassName;
-            }
-            return (
-              <li
-                key={`Sort type is by ${sortType}`}
-                className={classValue}
-                tabIndex={0}
-                onClick={() => {
-                  if (sortType !== activeSortType) {
-                    setActiveSortType(sortType);
-                  }
-                }}
-              >
-                {sortType}
-              </li>
-            );
-          })
+          Object.values(sortOffersBy).map((sortType) => (
+            <OffersSortingOption
+              key={`Sort type is by ${sortType}`}
+              sortType={sortType}
+              activeSortType={activeSortType}
+              onClickHandler={onClickHandler}
+            />),
+          )
         }
       </ul>
     </form>

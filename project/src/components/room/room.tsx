@@ -29,7 +29,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RoomProps;
 
 function Room({ match, offers, city }: ConnectedComponentProps): JSX.Element {
-  const currentOffer: any = offers.find((offer: Offer) => offer.id === +match.params.id);
+  const currentOffer: any = offers.find((offer: Offer) => offer.id === Number(match.params.id));
 
   const history = useHistory();
 

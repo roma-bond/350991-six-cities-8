@@ -1,4 +1,5 @@
 export enum AppRoute {
+  Main = '/',
   Favorites = '/favorites',
   Login = '/login',
   Offer = '/offer',
@@ -26,6 +27,13 @@ export const CITIES = [
   'Hamburg',
   'Dusseldorf',
 ];
+
+export const DEFAULT_CITY_SETTING = {
+  title: 'Paris',
+  lat: 0,
+  lng: 0,
+  zoom: 0,
+};
 
 export enum APIRoute {
   Offers = '/hotels',

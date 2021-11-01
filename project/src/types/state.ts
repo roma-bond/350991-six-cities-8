@@ -6,6 +6,6 @@ export type State = {
   city: string;
   offers: Offer[];
   sortBy: sortOffersBy;
-  authStatus: AuthorizationStatus;
+  authorizationStatus: AuthorizationStatus;
   isDataLoaded: boolean;
 };

@@ -6,7 +6,7 @@ export const initialState: State = {
   city: 'Paris',
   offers: [],
   sortBy: sortOffersBy.popular,
-  authStatus: AuthorizationStatus.Unknown,
+  authorizationStatus: AuthorizationStatus.Unknown,
   isDataLoaded: false,
 };
 
@@ -36,13 +36,13 @@ const reducer = (state: State = initialState, action: Actions): State => {
     case ActionType.RequireAuthorization:
       return {
         ...state,
-        authStatus: action.payload,
+        authorizationStatus: action.payload,
         isDataLoaded: true,
       };
     case ActionType.RequireLogout:
       return {
         ...state,
-        authStatus: AuthorizationStatus.NoAuth,
+        authorizationStatus: AuthorizationStatus.NoAuth,
       };
     default:
       return state;

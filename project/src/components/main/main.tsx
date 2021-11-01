@@ -4,24 +4,28 @@ import OffersSorting from '../offers-sorting/offers-sorting';
 import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
+import SignInList from '../sign-in-list/sign-in-list';
 import { getSortedOffers, getCityMapCoordinates } from '../../store-utilities/offers';
 import { City, Point } from '../../types/map';
 import { State } from '../../types/state';
-import { CITIES } from '../../const';
+import { CITIES, DEFAULT_CITY_SETTING } from '../../const';
+import { Offer } from '../../types/offer';
 
-const mapStateToProps = ({ city, offers, sortBy }: State) => ({
+const mapStateToProps = ({ city, offers, sortBy, authorizationStatus }: State) => ({
   activeCity: city,
   offers,
   sortBy,
+  authorizationStatus,
 });
 
 const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
-  let displayedOffers = getSortedOffers(activeCity, offers, sortBy);
-  let cityMapCoordinates: City = getCityMapCoordinates(activeCity, offers);
+function Main({ activeCity, offers, sortBy, authorizationStatus }: PropsFromRedux): JSX.Element {
+  const [displayedOffers, setDidplayedOffers] = useState<Offer[]>([]);
+  const [cityMapCoordinates, setСityMapCoordinates] = useState<City>(DEFAULT_CITY_SETTING);
+
   let cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
 
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
@@ -32,8 +36,8 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
   });
 
   useEffect(() => {
-    displayedOffers = getSortedOffers(activeCity, offers, sortBy);
-    cityMapCoordinates = getCityMapCoordinates(activeCity, offers);
+    setDidplayedOffers(getSortedOffers(activeCity, offers, sortBy));
+    setСityMapCoordinates(getCityMapCoordinates(activeCity, offers));
     cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
   }, [offers, activeCity]);
 
@@ -54,20 +58,7 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
               </a>
             </div>
             <nav className="header__nav">
-              <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="#">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
-              </ul>
+              <SignInList authorizationStatus={authorizationStatus} />
             </nav>
           </div>
         </div>

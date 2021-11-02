@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { sortOffersBy } from '../../const';
 
 type OffersSortingOptionProps = {
@@ -7,11 +8,10 @@ type OffersSortingOptionProps = {
 }
 
 function OffersSortingOption({ sortType, activeSortType, onClickHandler }: OffersSortingOptionProps): JSX.Element {
-  const activeClassName = ' places__option--active';
-  let classValue = 'places__option';
-  if (sortType === activeSortType) {
-    classValue += activeClassName;
-  }
+  const classValue = (sortType !== activeSortType)
+    ? 'places__option'
+    : classNames('places__option', 'places__option--active');
+
   const optionClickHandler = () => {
     onClickHandler(sortType, sortType !== activeSortType);
   };

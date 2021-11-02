@@ -14,8 +14,8 @@ import { State } from '../../types/state';
 export const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
   authorizationStatus === AuthorizationStatus.Unknown;
 
-const mapStateToProps = ({ authStatus, isDataLoaded }: State) => ({
-  authStatus,
+const mapStateToProps = ({ authorizationStatus, isDataLoaded }: State) => ({
+  authorizationStatus,
   isDataLoaded,
 });
 
@@ -24,9 +24,9 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function App(props: PropsFromRedux): JSX.Element {
-  const {authStatus, isDataLoaded} = props;
+  const {authorizationStatus, isDataLoaded} = props;
 
-  if (isCheckedAuth(authStatus) || !isDataLoaded) {
+  if (isCheckedAuth(authorizationStatus) || !isDataLoaded) {
     return (
       <LoadingScreen />
     );
@@ -45,7 +45,6 @@ function App(props: PropsFromRedux): JSX.Element {
           exact
           path={AppRoute.Favorites}
           render={() => <Favorites page='favorites' />}
-          authorizationStatus={AuthorizationStatus.Auth}
         >
         </PrivateRoute>
         <Route
@@ -61,5 +60,5 @@ function App(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {App};
+export { App };
 export default connector(App);

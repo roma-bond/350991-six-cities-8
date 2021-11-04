@@ -8,6 +8,9 @@ export const initialState: State = {
   sortBy: sortOffersBy.popular,
   authorizationStatus: AuthorizationStatus.Unknown,
   isDataLoaded: false,
+  currentOffer: null,
+  nearbyOffers: [],
+  reviews: [],
 };
 
 const reducer = (state: State = initialState, action: Actions): State => {
@@ -33,6 +36,11 @@ const reducer = (state: State = initialState, action: Actions): State => {
         ...state,
         offers: action.payload,
       };
+    case ActionType.LoadOffer:
+      return {
+        ...state,
+        currentOffer: action.payload,
+      };
     case ActionType.RequireAuthorization:
       return {
         ...state,
@@ -43,6 +51,23 @@ const reducer = (state: State = initialState, action: Actions): State => {
       return {
         ...state,
         authorizationStatus: AuthorizationStatus.NoAuth,
+      };
+    case ActionType.LoadNearbyOffers:
+      return {
+        ...state,
+        nearbyOffers: action.payload,
+      };
+    case ActionType.LoadReviews:
+      return {
+        ...state,
+        reviews: action.payload,
+      };
+    case ActionType.ResetOfferPageData:
+      return {
+        ...state,
+        currentOffer: null,
+        nearbyOffers: [],
+        reviews: [],
       };
     default:
       return state;

@@ -8,7 +8,7 @@ function NotFound(): JSX.Element {
         <div className="container">
           <p>404 - Page not found</p>
           <p>
-            <Link to={AppRoute.Root} className="header__nav-link header__nav-link--profile">Back home</Link>
+            <Link to={AppRoute.Main} className="header__nav-link header__nav-link--profile">Back home</Link>
           </p>
         </div>
       </main>

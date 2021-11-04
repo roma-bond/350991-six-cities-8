@@ -1,4 +1,4 @@
-import { Offer } from './offer';
+import { Offer, Review } from './offer';
 import { sortOffersBy } from '../const';
 import { AuthorizationStatus } from '../const';
 
@@ -8,4 +8,7 @@ export type State = {
   sortBy: sortOffersBy;
   authorizationStatus: AuthorizationStatus;
   isDataLoaded: boolean;
+  currentOffer: Offer | null;
+  nearbyOffers: Offer[];
+  reviews: Review[];
 };

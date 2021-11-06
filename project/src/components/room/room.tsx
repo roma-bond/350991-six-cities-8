@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { Offer } from '../../types/offer';
-import { Point } from '../../types/map';
-import { reviews } from '../../mocks/reviews';
 import CommentForm from '../comment-form/comment-form';
 import ReviewsList from '../reviews-list/reviews-list';
+import { ThunkAppDispatch } from '../../types/action';
 import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
+import LoadingScreen from '../loading-screen/loading-screen';
+import { fetchOfferAction } from '../../store/api-actions';
 import { State } from '../../types/state';
-import { City } from '../../types/map';
+import { Offer, Review } from '../../types/offer';
+import { City, Point } from '../../types/map';
+import { AuthorizationStatus } from '../../const';
 
 interface MatchParams {
   id: string;
@@ -19,32 +21,50 @@ interface RoomProps extends RouteComponentProps<MatchParams> {
   city: City;
 }
 
-const mapStateToProps = ({ offers }: State) => ({
-  offers,
+const mapStateToProps = ({ currentOffer, nearbyOffers, reviews, authorizationStatus }: State) => ({
+  currentOffer,
+  nearbyOffers,
+  reviews,
+  authorizationStatus,
 });
 
-const connector = connect(mapStateToProps);
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  loadServerData: (id: number) => {
+    dispatch(fetchOfferAction(id));
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RoomProps;
 
-function Room({ match, offers, city }: ConnectedComponentProps): JSX.Element {
-  const currentOffer: any = offers.find((offer: Offer) => offer.id === Number(match.params.id));
+function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, authorizationStatus, city }: ConnectedComponentProps): JSX.Element {
+  const [points, setPoints] = useState<Point[]>([]);
+  const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
+  const [, setDisplayedOffer] = useState<Offer | null>(null);
+  const [, setDisplayedReviews] = useState<Review[]>([]);
 
-  const history = useHistory();
+  useEffect(() => {
+    const pointsFromServer = nearbyOffers.map((offer) => {
+      const { id } = offer;
+      return {id, ...offer.coordinates};
+    });
+    setPoints(pointsFromServer);
+
+    if (currentOffer && reviews) {
+      setDisplayedOffer(currentOffer);
+      setDisplayedReviews(reviews);
+    } else {
+      loadServerData(Number(match.params.id));
+    }
+  }, [nearbyOffers, currentOffer, reviews]);
 
   if (!currentOffer) {
-    history.push('/');
+    return (
+      <LoadingScreen />
+    );
   }
-
-  const points = offers.map((offer) => {
-    const { id } = offer;
-    return {id, ...offer.coordinates};
-  });
-
-  const offerPoint = points.find((point) => point.id === currentOffer.id) || null;
-
-  const [selectedPoint, setSelectedPoint] = useState<Point | null>(offerPoint);
 
   const onListItemHover = (listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;
@@ -168,14 +188,16 @@ function Room({ match, offers, city }: ConnectedComponentProps): JSX.Element {
               </div>
               <section className="property__reviews reviews">
                 <ReviewsList reviews={reviews} />
-                <CommentForm />
+                {
+                  authorizationStatus === AuthorizationStatus.Auth && <CommentForm offerId={currentOffer.id} />
+                }
               </section>
             </div>
           </div>
           <section className="property__map map">
             <OffersMap
               city={city}
-              points={points.slice(0, 3)}
+              points={points}
               selectedPoint={selectedPoint}
               fixedOfferMarkerId={currentOffer.id}
             />
@@ -184,12 +206,16 @@ function Room({ match, offers, city }: ConnectedComponentProps): JSX.Element {
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
-            <OffersList
-              offers={offers.filter((offer) => offer.id !== currentOffer.id).slice(0, 3)}
-              onListItemHover={onListItemHover}
-              offersListType={'offer'}
-              onListItemOut={onListItemOut}
-            />
+            {
+              nearbyOffers && (
+                <OffersList
+                  offers={nearbyOffers}
+                  onListItemHover={onListItemHover}
+                  offersListType={'offer'}
+                  onListItemOut={onListItemOut}
+                />
+              )
+            }
           </section>
         </div>
       </main>

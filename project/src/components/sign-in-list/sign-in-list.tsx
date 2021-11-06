@@ -1,11 +1,25 @@
 import { Link } from 'react-router-dom';
 import { AuthorizationStatus } from '../../const';
+import { ThunkAppDispatch } from '../../types/action';
+import { connect, ConnectedProps } from 'react-redux';
+import { logoutAction } from '../../store/api-actions';
 
 type SignInListProps = {
   authorizationStatus: AuthorizationStatus;
 }
 
-function SignInList({ authorizationStatus }: SignInListProps): JSX.Element {
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  onLogout: () => {
+    dispatch(logoutAction());
+  },
+});
+
+const connector = connect(null, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & SignInListProps;
+
+function SignInList({ authorizationStatus, onLogout }: ConnectedComponentProps): JSX.Element {
 
   return (
     <ul className="header__nav-list">
@@ -20,7 +34,7 @@ function SignInList({ authorizationStatus }: SignInListProps): JSX.Element {
               </a>
             </li>
             <li className="header__nav-item">
-              <a className="header__nav-link" href="#">
+              <a className="header__nav-link" href="#" onClick={onLogout}>
                 <span className="header__signout">Sign out</span>
               </a>
             </li>
@@ -37,4 +51,5 @@ function SignInList({ authorizationStatus }: SignInListProps): JSX.Element {
   );
 }
 
-export default SignInList;
+export { SignInList };
+export default connector(SignInList);

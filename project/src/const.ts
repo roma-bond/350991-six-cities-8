@@ -3,7 +3,6 @@ export enum AppRoute {
   Favorites = '/favorites',
   Login = '/login',
   Offer = '/offer',
-  Root = '/'
 }
 
 export enum AuthorizationStatus {
@@ -37,6 +36,8 @@ export const DEFAULT_CITY_SETTING = {
 
 export enum APIRoute {
   Offers = '/hotels',
+  Reviews = '/comments',
   Login = '/login',
   Logout = '/logout',
+  NotFound = '/page_not_found',
 }

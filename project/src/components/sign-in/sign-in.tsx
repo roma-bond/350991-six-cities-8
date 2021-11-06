@@ -1,10 +1,9 @@
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useRef, FormEvent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { loginAction } from '../../store/api-actions';
 import { ThunkAppDispatch } from '../../types/action';
 import { AuthData } from '../../types/auth-data';
-import { AppRoute } from '../../const';
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onSubmit(authData: AuthData) {
@@ -15,14 +14,13 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
 const connector = connect(null, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux;
 
-function SignIn(props: PropsFromRedux): JSX.Element {
+function SignIn(props: ConnectedComponentProps): JSX.Element {
   const { onSubmit } = props;
 
   const loginRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-
-  const history = useHistory();
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
@@ -82,7 +80,6 @@ function SignIn(props: PropsFromRedux): JSX.Element {
                 />
               </div>
               <button
-                onClick={() => history.push(AppRoute.Main)}
                 className="login__submit form__submit button"
                 type="submit"
               >

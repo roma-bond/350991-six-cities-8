@@ -1,5 +1,5 @@
 import {connect, ConnectedProps} from 'react-redux';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Router as BrowserRouter, Switch, Route } from 'react-router-dom';
 import Main from '../main/main';
 import SignIn from '../sign-in/sign-in';
 import Favorites from '../favorites/favorites';
@@ -10,6 +10,7 @@ import LoadingScreen from '../loading-screen/loading-screen';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { CITY } from '../../mocks/city';
 import { State } from '../../types/state';
+import browserHistory from '../../browser-history';
 
 export const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
   authorizationStatus === AuthorizationStatus.Unknown;
@@ -33,9 +34,9 @@ function App(props: PropsFromRedux): JSX.Element {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter history={browserHistory}>
       <Switch>
-        <Route exact path={AppRoute.Root}>
+        <Route exact path={AppRoute.Main}>
           <Main />
         </Route>
         <Route exact path={AppRoute.Login}>
@@ -44,9 +45,8 @@ function App(props: PropsFromRedux): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.Favorites}
-          render={() => <Favorites page='favorites' />}
-        >
-        </PrivateRoute>
+          render={({ history }) => <Favorites page='favorites' />}
+        />
         <Route
           exact
           path={`${AppRoute.Offer}/:id`}

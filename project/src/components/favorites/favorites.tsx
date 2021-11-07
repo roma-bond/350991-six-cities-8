@@ -2,13 +2,14 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
 import OfferCard from '../offer-card/offer-card';
 import { State } from '../../types/state';
+import { getOffers } from '../../store/data-reducer/selectors';
 
 type FavoritesProps = {
   page: string;
 }
 
-const mapStateToProps = ({ offers }: State) => ({
-  offers,
+const mapStateToProps = (state: State) => ({
+  offers: getOffers(state),
 });
 
 const connector = connect(mapStateToProps);

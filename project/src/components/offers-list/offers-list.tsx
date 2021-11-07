@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import OfferCard from '../offer-card/offer-card';
 import { Offer } from '../../types/offer';
 
@@ -38,4 +38,4 @@ function OffersList({ offers, onListItemHover, offersListType, onListItemOut }: 
   );
 }
 
-export default OffersList;
+export default React.memo(OffersList);

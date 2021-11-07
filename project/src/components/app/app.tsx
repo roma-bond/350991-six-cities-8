@@ -7,27 +7,22 @@ import Room from '../room/room';
 import NotFound from '../not-found/not-found';
 import PrivateRoute from '../private-route/private-route';
 import LoadingScreen from '../loading-screen/loading-screen';
-import { AppRoute, AuthorizationStatus } from '../../const';
-import { CITY } from '../../mocks/city';
+import { getLoadedDataStatus } from '../../store/data-reducer/selectors';
+import { AppRoute } from '../../const';
 import { State } from '../../types/state';
 import browserHistory from '../../browser-history';
 
-export const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
-  authorizationStatus === AuthorizationStatus.Unknown;
-
-const mapStateToProps = ({ authorizationStatus, isDataLoaded }: State) => ({
-  authorizationStatus,
-  isDataLoaded,
+const mapStateToProps = (state: State) => ({
+  isDataLoaded: getLoadedDataStatus(state),
 });
 
 const connector = connect(mapStateToProps);
-
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function App(props: PropsFromRedux): JSX.Element {
-  const {authorizationStatus, isDataLoaded} = props;
+  const { isDataLoaded } = props;
 
-  if (isCheckedAuth(authorizationStatus) || !isDataLoaded) {
+  if (!isDataLoaded) {
     return (
       <LoadingScreen />
     );
@@ -50,7 +45,7 @@ function App(props: PropsFromRedux): JSX.Element {
         <Route
           exact
           path={`${AppRoute.Offer}/:id`}
-          render={(routeProps) => <Room {...routeProps} city={CITY} />}
+          render={(routeProps) => <Room {...routeProps} />}
         />
         <Route>
           <NotFound />

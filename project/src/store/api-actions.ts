@@ -64,8 +64,10 @@ const normalizeReviewsData = (data: any): Review[] => data.map((review: any) => 
 export const fetchOffersAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     const { data } = await api.get<Offer[]>(APIRoute.Offers);
-    const convertedData = normalizeOffersData(data);
-    dispatch(loadOffers(convertedData));
+    if (data) {
+      const convertedData = normalizeOffersData(data);
+      dispatch(loadOffers(convertedData));
+    }
   };
 
 export const fetchOfferAction = (id: number): ThunkActionResult =>

@@ -5,10 +5,10 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createAPI } from './services/api';
-import { reducer } from './store/reducer';
+import { rootReducer } from './store/root-reducer';
 import { ThunkAppDispatch } from './types/action';
 import App from './components/app/app';
-import { fetchOffersAction, checkAuthAction } from './store/api-actions';
+import { fetchOffersAction } from './store/api-actions';
 import { requireAuthorization } from './store/action';
 import { AuthorizationStatus } from './const';
 
@@ -17,13 +17,12 @@ const api = createAPI(
 );
 
 export const store = createStore(
-  reducer,
+  rootReducer,
   composeWithDevTools(
     applyMiddleware(thunk.withExtraArgument(api)),
   ),
 );
 
-(store.dispatch as ThunkAppDispatch)(checkAuthAction());
 (store.dispatch as ThunkAppDispatch)(fetchOffersAction());
 
 ReactDOM.render(

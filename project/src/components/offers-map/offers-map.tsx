@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Marker, Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { City, Point } from '../../types/map';
@@ -73,4 +73,4 @@ function OffersMap({ city, points, selectedPoint, fixedOfferMarkerId }: MapProps
   );
 }
 
-export default OffersMap;
+export default React.memo(OffersMap);

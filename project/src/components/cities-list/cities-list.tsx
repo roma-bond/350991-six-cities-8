@@ -4,13 +4,14 @@ import { connect, ConnectedProps } from 'react-redux';
 import { changeCity } from '../../store/action';
 import { ChangeCityAction } from '../../types/action';
 import { State } from '../../types/state';
+import { getActiveCity } from '../../store/filter-reducer/selectors';
 
 type CitiesListProps = {
   cities: string[];
 }
 
-const mapStateToProps = ({ city }: State) => ({
-  activeCity: city,
+const mapStateToProps = (state: State) => ({
+  activeCity: getActiveCity(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<ChangeCityAction>) => ({

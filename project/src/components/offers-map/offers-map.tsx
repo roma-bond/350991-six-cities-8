@@ -49,6 +49,22 @@ function OffersMap({ city, points, selectedPoint, fixedOfferMarkerId }: MapProps
     });
   }
 
+  // if (fixedOfferMarkerId && map) {
+  //   points = points.filter((point) => {
+  //     if (point.id === fixedOfferMarkerId) {
+  //       const marker = new Marker({
+  //         lat: point.lat,
+  //         lng: point.lng,
+  //       });
+
+  //       marker
+  //         .setIcon(fixedIcon)
+  //         .addTo(map);
+  //     }
+  //     return point.id !== fixedOfferMarkerId;
+  //   });
+  // }
+
   useEffect(() => {
     if (map) {
       points.forEach((point) => {

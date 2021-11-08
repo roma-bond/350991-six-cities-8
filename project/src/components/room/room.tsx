@@ -58,11 +58,15 @@ function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, auth
         zoom: currentOffer.city.location.zoom,
       });
       setDisplayedOffer(currentOffer);
+      setPoints((prevPoints) => prevPoints.concat({
+        id: currentOffer.id,
+        ...currentOffer.coordinates,
+      }));
       setDisplayedReviews(reviews);
     } else {
       loadServerData(Number(match.params.id));
     }
-  }, [currentOffer, reviews]);
+  }, [currentOffer, reviews, selectedPoint]);
 
   const onListItemHover = React.useCallback((listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;

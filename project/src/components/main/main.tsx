@@ -10,19 +10,20 @@ import { City, Point } from '../../types/map';
 import { State } from '../../types/state';
 import { CITIES, DEFAULT_CITY_SETTING } from '../../const';
 import { Offer } from '../../types/offer';
+import { getActiveCity, getActiveSorting } from '../../store/filter-reducer/selectors';
+import { getOffers } from '../../store/data-reducer/selectors';
 
-const mapStateToProps = ({ city, offers, sortBy, authorizationStatus }: State) => ({
-  activeCity: city,
-  offers,
-  sortBy,
-  authorizationStatus,
+const mapStateToProps = (state: State) => ({
+  activeCity: getActiveCity(state),
+  offers: getOffers(state),
+  sortBy: getActiveSorting(state),
 });
 
 const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function Main({ activeCity, offers, sortBy, authorizationStatus }: PropsFromRedux): JSX.Element {
+function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
   const [displayedOffers, setDidplayedOffers] = useState<Offer[]>([]);
   const [cityMapCoordinates, setСityMapCoordinates] = useState<City>(DEFAULT_CITY_SETTING);
 
@@ -39,7 +40,7 @@ function Main({ activeCity, offers, sortBy, authorizationStatus }: PropsFromRedu
     setDidplayedOffers(getSortedOffers(activeCity, offers, sortBy));
     setСityMapCoordinates(getCityMapCoordinates(activeCity, offers));
     cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
-  }, [offers, activeCity]);
+  }, [offers, activeCity, sortBy]);
 
   const onListItemHover = (listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;
@@ -58,7 +59,7 @@ function Main({ activeCity, offers, sortBy, authorizationStatus }: PropsFromRedu
               </a>
             </div>
             <nav className="header__nav">
-              <SignInList authorizationStatus={authorizationStatus} />
+              <SignInList />
             </nav>
           </div>
         </div>

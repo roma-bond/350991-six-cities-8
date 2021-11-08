@@ -3,10 +3,12 @@ import { AuthorizationStatus } from '../../const';
 import { ThunkAppDispatch } from '../../types/action';
 import { connect, ConnectedProps } from 'react-redux';
 import { logoutAction } from '../../store/api-actions';
+import { State } from '../../types/state';
+import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
 
-type SignInListProps = {
-  authorizationStatus: AuthorizationStatus;
-}
+const mapStateToProps = (state: State) => ({
+  authorizationStatus: getAuthorizationStatus(state),
+});
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onLogout: () => {
@@ -14,12 +16,10 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   },
 });
 
-const connector = connect(null, mapDispatchToProps);
-
+const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & SignInListProps;
 
-function SignInList({ authorizationStatus, onLogout }: ConnectedComponentProps): JSX.Element {
+function SignInList({ authorizationStatus, onLogout }: PropsFromRedux): JSX.Element {
 
   return (
     <ul className="header__nav-list">

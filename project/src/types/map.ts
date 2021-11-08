@@ -1,14 +1,11 @@
-export type City = {
-  title: string,
+export type Coordinates = {
   lat: number,
   lng: number,
   zoom: number,
 }
 
-export type Coordinates = {
-  lat: number,
-  lng: number,
-  zoom: number,
+export type City = Coordinates & {
+  title: string,
 }
 
 export type Point = Coordinates & {

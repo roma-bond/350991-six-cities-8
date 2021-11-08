@@ -1,31 +1,28 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
+import { ThunkAppDispatch } from '../../types/action';
 import CommentForm from '../comment-form/comment-form';
 import ReviewsList from '../reviews-list/reviews-list';
-import { ThunkAppDispatch } from '../../types/action';
 import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
 import LoadingScreen from '../loading-screen/loading-screen';
+import SignInList from '../sign-in-list/sign-in-list';
 import { fetchOfferAction } from '../../store/api-actions';
 import { State } from '../../types/state';
 import { Offer, Review } from '../../types/offer';
 import { City, Point } from '../../types/map';
 import { AuthorizationStatus } from '../../const';
+import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
+import { getCurrentOffer, getNearbyOffers, getReviews } from '../../store/data-reducer/selectors';
 
-interface MatchParams {
-  id: string;
-}
+type TParams = { id: string };
 
-interface RoomProps extends RouteComponentProps<MatchParams> {
-  city: City;
-}
-
-const mapStateToProps = ({ currentOffer, nearbyOffers, reviews, authorizationStatus }: State) => ({
-  currentOffer,
-  nearbyOffers,
-  reviews,
-  authorizationStatus,
+const mapStateToProps = (state: State) => ({
+  currentOffer: getCurrentOffer(state),
+  nearbyOffers: getNearbyOffers(state),
+  reviews: getReviews(state),
+  authorizationStatus: getAuthorizationStatus(state),
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
@@ -37,9 +34,10 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & RoomProps;
+type ConnectedComponentProps = PropsFromRedux & RouteComponentProps<TParams>;
 
-function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, authorizationStatus, city }: ConnectedComponentProps): JSX.Element {
+function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
+  const [city, setCity] = useState<City | null>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [, setDisplayedOffer] = useState<Offer | null>(null);
@@ -53,25 +51,35 @@ function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, auth
     setPoints(pointsFromServer);
 
     if (currentOffer && reviews) {
+      setCity({
+        title: currentOffer.city.name,
+        lat: currentOffer.city.location.latitude,
+        lng: currentOffer.city.location.longitude,
+        zoom: currentOffer.city.location.zoom,
+      });
       setDisplayedOffer(currentOffer);
+      setPoints((prevPoints) => prevPoints.concat({
+        id: currentOffer.id,
+        ...currentOffer.coordinates,
+      }));
       setDisplayedReviews(reviews);
     } else {
       loadServerData(Number(match.params.id));
     }
-  }, [nearbyOffers, currentOffer, reviews]);
+  }, [currentOffer, reviews, selectedPoint]);
 
-  if (!currentOffer) {
+  const onListItemHover = React.useCallback((listItemId: number) => {
+    const currentPoint = points.find((point) => point.id === listItemId) || null;
+    setSelectedPoint(currentPoint);
+  }, []);
+
+  const onListItemOut = React.useCallback(() => setSelectedPoint(null), []);
+
+  if (!currentOffer || !city) {
     return (
       <LoadingScreen />
     );
   }
-
-  const onListItemHover = (listItemId: number) => {
-    const currentPoint = points.find((point) => point.id === listItemId) || null;
-    setSelectedPoint(currentPoint);
-  };
-
-  const onListItemOut = () => setSelectedPoint(null);
 
   return (
     <div className="page">
@@ -85,18 +93,7 @@ function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, auth
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="#">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
+                <SignInList />
               </ul>
             </nav>
           </div>

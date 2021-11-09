@@ -16,7 +16,6 @@ export type UserState = {
 };
 
 export type FilterState = {
-  city: string;
   sortBy: sortOffersBy;
 };
 

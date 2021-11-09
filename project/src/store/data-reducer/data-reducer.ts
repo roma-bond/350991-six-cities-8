@@ -11,10 +11,10 @@ export const initialState: DataState = {
 
 const dataReducer = (state = initialState, action: Actions): DataState => {
   switch (action.type) {
-    case ActionType.UpdateOffers:
+    case ActionType.UpdateOfferFavoriteStatus:
       return {
         ...state,
-        offers: action.payload,
+        offers: Array.from(state.offers).map((offer) => (offer.id === action.payload) ? {...offer, favorite: !offer.favorite} : offer),
       };
     case ActionType.LoadOffers:
       return {

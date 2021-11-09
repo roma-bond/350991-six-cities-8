@@ -1,6 +1,7 @@
 import { ThunkActionResult } from '../types/action';
 import {
   loadOffers,
+  updateOfferFavoriteStatus,
   loadOffer,
   loadNearbyOffers,
   loadReviews,
@@ -14,22 +15,31 @@ import { AuthData } from '../types/auth-data';
 import browserHistory from '../browser-history';
 import { ReviewPost } from '../types/offer';
 
-const normalizeOffersData = (data: any) => data.map((serverOffer: any) => ({
-  ...serverOffer,
-  coordinates: {
-    zoom: serverOffer.location.zoom,
-    lat: serverOffer.location.latitude,
-    lng: serverOffer.location.longitude,
-  },
-  facilities: serverOffer.goods,
-  favorite: serverOffer.is_favorite,
+const normalizeOffersData = (data: any): Offer[] => data.map((serverOffer: any) => ({
+  // ...serverOffer,
+  id: serverOffer.id,
+  city: serverOffer.city,
+  images: serverOffer.images,
   premium: serverOffer.is_premium,
+  price: serverOffer.price,
+  title: serverOffer.title,
+  type: serverOffer.type,
+  favorite: serverOffer.is_favorite,
+  rating: serverOffer.rating,
+  description: serverOffer.description,
+  bedrooms: serverOffer.bedrooms,
   maxGuests: serverOffer.max_adults,
   host: {
     id: serverOffer.host.id,
     image: serverOffer.host.avatar_url,
     fullName: serverOffer.host.name,
     pro: serverOffer.host.is_pro,
+  },
+  facilities: serverOffer.goods,
+  coordinates: {
+    zoom: serverOffer.location.zoom,
+    lat: serverOffer.location.latitude,
+    lng: serverOffer.location.longitude,
   },
 }));
 
@@ -63,10 +73,14 @@ const normalizeReviewsData = (data: any): Review[] => data.map((review: any) => 
 
 export const fetchOffersAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
-    const { data } = await api.get<Offer[]>(APIRoute.Offers);
-    if (data) {
-      const convertedData = normalizeOffersData(data);
-      dispatch(loadOffers(convertedData));
+    try {
+      const { data } = await api.get<Offer[]>(APIRoute.Offers);
+      if (data) {
+        const convertedData = normalizeOffersData(data);
+        dispatch(loadOffers(convertedData));
+      }
+    } catch (e) {
+      dispatch(loadOffers([]));
     }
   };
 
@@ -115,4 +129,24 @@ export const submitReviewAction = (offerId: number, {text: comment, rating}: Rev
     const { data } = await api.post<{reviews: Review[]}>(`${APIRoute.Reviews}/${offerId}`, {comment, rating});
     const convertedReviewsData = normalizeReviewsData(data);
     dispatch(loadReviews(convertedReviewsData));
+  };
+
+export const submitFavoriteAction = (offerId: number, favorite: boolean): ThunkActionResult =>
+  async (dispatch, _getState, api) => {
+    const favoriteNum = favorite ? 1 : 0;
+    const { data } = await api.post<any>(`${APIRoute.Favorite}/${offerId}/${favoriteNum}`);
+    dispatch(updateOfferFavoriteStatus(data.id));
+  };
+
+export const fetchFavoriteOffersAction = (): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    try {
+      const { data } = await api.get<Offer[]>(APIRoute.Favorite);
+      if (data) {
+        const convertedData = normalizeOffersData(data);
+        dispatch(loadOffers(convertedData));
+      }
+    } catch (e) {
+      dispatch(loadOffers([]));
+    }
   };

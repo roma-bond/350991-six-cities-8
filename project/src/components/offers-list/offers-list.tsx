@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import OfferCard from '../offer-card/offer-card';
 import { Offer } from '../../types/offer';
+import { AuthorizationStatus } from '../../const';
 
 type OffersListProps = {
   offers: Offer[];
   onListItemHover: (listItemId: number) => void;
   offersListType: string;
   onListItemOut?: () => void;
+  authorizationStatus?: AuthorizationStatus,
 }
 
-function OffersList({ offers, onListItemHover, offersListType, onListItemOut }: OffersListProps): JSX.Element {
+function OffersList({ offers, onListItemHover, offersListType, onListItemOut, authorizationStatus }: OffersListProps): JSX.Element {
   const [, setActiveId] = useState(offers.length > 0 ? offers[0].id : null);
 
   let extraListClass = '';
@@ -31,6 +33,7 @@ function OffersList({ offers, onListItemHover, offersListType, onListItemOut }: 
             onMouseEnter={() => onListItemHover(offer.id)}
             onMouseOut={onListItemOut}
             page='main'
+            authorizationStatus={authorizationStatus}
           />),
         )
       }

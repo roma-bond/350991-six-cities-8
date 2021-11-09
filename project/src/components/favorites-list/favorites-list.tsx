@@ -1,6 +1,6 @@
 import OfferCard from '../offer-card/offer-card';
 import { Offer } from '../../types/offer';
-import { CITIES } from '../../const';
+import { CITIES, AuthorizationStatus } from '../../const';
 
 type FavoritesListProps = {
   offers: Offer[];
@@ -40,6 +40,7 @@ function FavoritesList({ offers }: FavoritesListProps): JSX.Element {
                       key={`${offer.id}-favorite-offer-${offer.description}`}
                       offer={offer}
                       page={'favorites'}
+                      authorizationStatus={AuthorizationStatus.Auth}
                     />
                   ))}
                 </div>

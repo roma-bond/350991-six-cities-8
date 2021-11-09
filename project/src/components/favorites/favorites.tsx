@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import FavoritesEmpty from '../favorites-empty/favorites-empty';
 import SignInList from '../sign-in-list/sign-in-list';
 import FavoritesList from '../favorites-list/favorites-list';
-import { fetchFavoriteOffersAction, fetchOffersAction } from '../../store/api-actions';
+import { fetchOffersAction } from '../../store/api-actions';
 import { ThunkAppDispatch } from '../../types/action';
 import { State } from '../../types/state';
 import { getOffers } from '../../store/data-reducer/selectors';
@@ -15,9 +15,6 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  loadFavoriteOffers: () => {
-    dispatch(fetchFavoriteOffersAction());
-  },
   loadOffers: () => {
     dispatch(fetchOffersAction());
   },
@@ -27,16 +24,15 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function Favorites({ offers, loadFavoriteOffers, loadOffers }: PropsFromRedux): JSX.Element {
+function Favorites({ offers, loadOffers }: PropsFromRedux): JSX.Element {
   const [favoriteOffers, setFavouriteOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
     setFavouriteOffers(offers.filter((offer) => offer.favorite));
-    loadFavoriteOffers();
   }, [offers]);
 
   if (favoriteOffers.length === 0) {
-    return <FavoritesEmpty />;
+    return <FavoritesEmpty onLogoClick={loadOffers} />;
   }
   return (
     <div className="page">

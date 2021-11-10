@@ -1,7 +1,7 @@
 import {
   ActionType,
   ChangeCityAction,
-  UpdateOffersAction,
+  UpdateOfferFavoriteStatusAction,
   UpdateSortingAction,
   LoadOffers,
   LoadOffer,
@@ -19,9 +19,9 @@ export const changeCity = (city: string): ChangeCityAction => ({
   payload: city,
 });
 
-export const updateOffers = (offers: Offer[]): UpdateOffersAction => ({
-  type: ActionType.UpdateOffers,
-  payload: offers,
+export const updateOfferFavoriteStatus = (id: number): UpdateOfferFavoriteStatusAction => ({
+  type: ActionType.UpdateOfferFavoriteStatus,
+  payload: id,
 });
 
 export const updateSorting = (sorting: sortOffersBy): UpdateSortingAction => ({

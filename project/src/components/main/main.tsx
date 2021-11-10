@@ -1,29 +1,39 @@
 import { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import MainEmpty from '../main-empty/main-empty';
 import OffersSorting from '../offers-sorting/offers-sorting';
 import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
 import SignInList from '../sign-in-list/sign-in-list';
+import { CITIES, DEFAULT_CITY_SETTING, sortOffersBy } from '../../const';
 import { getSortedOffers, getCityMapCoordinates } from '../../store-utilities/offers';
 import { City, Point } from '../../types/map';
 import { State } from '../../types/state';
-import { CITIES, DEFAULT_CITY_SETTING } from '../../const';
+import { ThunkAppDispatch } from '../../types/action';
 import { Offer } from '../../types/offer';
-import { getActiveCity, getActiveSorting } from '../../store/filter-reducer/selectors';
 import { getOffers } from '../../store/data-reducer/selectors';
+import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
+import { fetchOffersAction } from '../../store/api-actions';
 
 const mapStateToProps = (state: State) => ({
-  activeCity: getActiveCity(state),
   offers: getOffers(state),
-  sortBy: getActiveSorting(state),
+  authorizationStatus: getAuthorizationStatus(state),
 });
 
-const connector = connect(mapStateToProps);
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  loadOffers: () => {
+    dispatch(fetchOffersAction());
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
+function Main({ offers, authorizationStatus }: PropsFromRedux): JSX.Element {
+  const [activeCity, setActiveCity] = useState('Paris');
+  const [sortBy, setSortBy] = useState<sortOffersBy>(sortOffersBy.popular);
   const [displayedOffers, setDidplayedOffers] = useState<Offer[]>([]);
   const [cityMapCoordinates, setСityMapCoordinates] = useState<City>(DEFAULT_CITY_SETTING);
 
@@ -36,6 +46,9 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
     return {id, ...offer.coordinates};
   });
 
+  const onChangeCity = (newCity: string) => setActiveCity(newCity);
+  const onUpdateSorting = (sorting: sortOffersBy) => setSortBy(sorting);
+
   useEffect(() => {
     setDidplayedOffers(getSortedOffers(activeCity, offers, sortBy));
     setСityMapCoordinates(getCityMapCoordinates(activeCity, offers));
@@ -47,6 +60,10 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
 
     setSelectedPoint(currentPoint);
   };
+
+  if (offers.length === 0) {
+    return <MainEmpty />;
+  }
 
   return (
     <div className="page page--gray page--main">
@@ -69,7 +86,11 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
           <section className="locations container">
-            <CitiesList cities={CITIES} />
+            <CitiesList
+              cities={CITIES}
+              activeCity={activeCity}
+              onChangeCity={onChangeCity}
+            />
           </section>
         </div>
         <div className="cities">
@@ -77,11 +98,14 @@ function Main({ activeCity, offers, sortBy }: PropsFromRedux): JSX.Element {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">{cityOffersAmount} places to stay in {activeCity}</b>
-              <OffersSorting />
+              <OffersSorting
+                onUpdateSorting={onUpdateSorting}
+              />
               <OffersList
                 offers={displayedOffers}
                 onListItemHover={onListItemHover}
                 offersListType={'main'}
+                authorizationStatus={authorizationStatus}
               />
             </section>
             <div className="cities__right-section">

@@ -1,23 +1,12 @@
 import { useState, useEffect } from 'react';
-import { updateSorting } from '../../store/action';
 import { sortOffersBy } from '../../const';
-import { Dispatch } from 'redux';
-import { connect, ConnectedProps } from 'react-redux';
 import OffersSortingOption from '../offers-sorting-option/offers-sorting-option';
-import { UpdateSortingAction } from '../../types/action';
 
-const mapDispatchToProps = (dispatch: Dispatch<UpdateSortingAction>) => ({
-  onUpdateSorting(sortBy: sortOffersBy) {
-    dispatch(updateSorting(sortBy));
-  },
-});
+type OffersSortingProps = {
+  onUpdateSorting: (activeSortType: sortOffersBy) => void;
+};
 
-const connector = connect(null , mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux;
-
-function OffersSorting({ onUpdateSorting }: ConnectedComponentProps): JSX.Element {
+function OffersSorting({ onUpdateSorting }: OffersSortingProps): JSX.Element {
   const [activeSortType, setActiveSortType] = useState(sortOffersBy.popular);
 
   useEffect(() => {
@@ -55,5 +44,4 @@ function OffersSorting({ onUpdateSorting }: ConnectedComponentProps): JSX.Elemen
   );
 }
 
-export { OffersSorting };
-export default connector(OffersSorting);
+export default OffersSorting;

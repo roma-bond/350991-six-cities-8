@@ -1,58 +1,51 @@
+import { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
-import OfferCard from '../offer-card/offer-card';
+import FavoritesEmpty from '../favorites-empty/favorites-empty';
+import SignInList from '../sign-in-list/sign-in-list';
+import FavoritesList from '../favorites-list/favorites-list';
+import { fetchOffersAction } from '../../store/api-actions';
+import { ThunkAppDispatch } from '../../types/action';
 import { State } from '../../types/state';
 import { getOffers } from '../../store/data-reducer/selectors';
-
-type FavoritesProps = {
-  page: string;
-}
+import { Offer } from '../../types/offer';
 
 const mapStateToProps = (state: State) => ({
   offers: getOffers(state),
 });
 
-const connector = connect(mapStateToProps);
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  loadOffers: () => {
+    dispatch(fetchOffersAction());
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & FavoritesProps;
 
-function Favorites({ offers, page }: ConnectedComponentProps): JSX.Element {
-  const getFavorites = () =>
-    offers.filter((offer) => offer.favorite)
-      .map((offer) => (
-        <OfferCard
-          key={offer.id}
-          offer={offer}
-          page={page}
-        />),
-      );
+function Favorites({ offers, loadOffers }: PropsFromRedux): JSX.Element {
+  const [favoriteOffers, setFavouriteOffers] = useState<Offer[]>([]);
 
+  useEffect(() => {
+    setFavouriteOffers(offers.filter((offer) => offer.favorite));
+  }, [offers]);
+
+  if (favoriteOffers.length === 0) {
+    return <FavoritesEmpty onLogoClick={loadOffers} />;
+  }
   return (
     <div className="page">
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <Link to="/" className="header__logo-link">
+              <Link to="/" className="header__logo-link" onClick={loadOffers}>
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
               </Link>
             </div>
             <nav className="header__nav">
-              <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="#">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
-              </ul>
+              <SignInList />
             </nav>
           </div>
         </div>
@@ -62,33 +55,7 @@ function Favorites({ offers, page }: ConnectedComponentProps): JSX.Element {
         <div className="page__favorites-container container">
           <section className="favorites">
             <h1 className="favorites__title">Saved listing</h1>
-            <ul className="favorites__list">
-              <li className="favorites__locations-items">
-                <div className="favorites__locations locations locations--current">
-                  <div className="locations__item">
-                    <a className="locations__item-link" href="#">
-                      <span>Amsterdam</span>
-                    </a>
-                  </div>
-                </div>
-                <div className="favorites__places">
-                  {getFavorites()}
-                </div>
-              </li>
-
-              <li className="favorites__locations-items">
-                <div className="favorites__locations locations locations--current">
-                  <div className="locations__item">
-                    <a className="locations__item-link" href="#">
-                      <span>Cologne</span>
-                    </a>
-                  </div>
-                </div>
-                <div className="favorites__places">
-                  {getFavorites()}
-                </div>
-              </li>
-            </ul>
+            <FavoritesList offers={favoriteOffers} />
           </section>
         </div>
       </main>

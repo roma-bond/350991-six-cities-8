@@ -1,7 +1,11 @@
-import { MouseEvent  } from 'react';
+import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { AppRoute } from '../../const';
+import { connect, ConnectedProps } from 'react-redux';
+import { AppRoute, APIRoute, AuthorizationStatus } from '../../const';
 import { Offer } from '../../types/offer';
+import { ThunkAppDispatch } from '../../types/action';
+import { submitFavoriteAction } from '../../store/api-actions';
+import browserHistory from '../../browser-history';
 
 type OfferCardProps = {
   offer: Offer;
@@ -9,10 +13,22 @@ type OfferCardProps = {
   onMouseEnter?: (event: MouseEvent<HTMLLIElement>) => void;
   onMouseOut?: () => void;
   page: string;
+  authorizationStatus?: AuthorizationStatus;
 }
 
-function OfferCard(props: OfferCardProps): JSX.Element {
-  const { offer, onMouseOver, onMouseEnter, onMouseOut, page } = props;
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  onUpdate: (id: number, favorite: boolean) => {
+    dispatch(submitFavoriteAction(id, favorite));
+  },
+});
+
+const connector = connect(null, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & OfferCardProps;
+
+function OfferCard(props: ConnectedComponentProps): JSX.Element {
+  const { offer, onMouseOver, onMouseEnter, onMouseOut, page, onUpdate, authorizationStatus } = props;
   const bookmarkButtonClass = offer.favorite ? 'place-card__bookmark-button place-card__bookmark-button--active button' : 'place-card__bookmark-button button';
 
   let placeCardExtraClass = 'cities__place-card';
@@ -32,6 +48,14 @@ function OfferCard(props: OfferCardProps): JSX.Element {
     imageWrapperExtraClass = 'near-places__image-wrapper';
   }
 
+  const onButtonClick = () => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      onUpdate(offer.id, !offer.favorite);
+    } else {
+      browserHistory.push(APIRoute.Login);
+    }
+  };
+
   return (
     <article onMouseEnter={onMouseEnter} onMouseOut={onMouseOut} className={`${placeCardExtraClass} place-card`} onMouseOver={onMouseOver}>
       { offer.premium &&
@@ -49,7 +73,7 @@ function OfferCard(props: OfferCardProps): JSX.Element {
             <b className="place-card__price-value">&euro;{offer.price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button className={bookmarkButtonClass} type="button">
+          <button className={bookmarkButtonClass} type="button" onClick={onButtonClick}>
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>
@@ -71,4 +95,5 @@ function OfferCard(props: OfferCardProps): JSX.Element {
   );
 }
 
-export default OfferCard;
+export { OfferCard };
+export default connector(OfferCard);

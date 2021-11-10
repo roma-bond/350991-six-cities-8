@@ -6,7 +6,7 @@ import { Offer, Review } from './offer';
 
 export enum ActionType {
   ChangeCity = 'CHANGE_CITY',
-  UpdateOffers = 'UPDATE_OFFERS',
+  UpdateOfferFavoriteStatus = 'UPDATE_OFFER_FAVORITE_STATUS',
   UpdateSorting = 'UPDATE_SORTING',
   LoadOffers = 'LOAD_OFFERS',
   LoadOffer = 'LOAD_OFFER',
@@ -22,9 +22,9 @@ export type ChangeCityAction = {
   payload: string;
 };
 
-export type UpdateOffersAction = {
-  type: ActionType.UpdateOffers;
-  payload: Offer[];
+export type UpdateOfferFavoriteStatusAction = {
+  type: ActionType.UpdateOfferFavoriteStatus;
+  payload: number;
 };
 
 export type UpdateSortingAction = {
@@ -67,7 +67,7 @@ export type ResetOfferPageData = {
 
 export type Actions =
   | ChangeCityAction
-  | UpdateOffersAction
+  | UpdateOfferFavoriteStatusAction
   | UpdateSortingAction
   | LoadOffers
   | LoadOffer

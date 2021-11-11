@@ -37,15 +37,14 @@ function Favorites({ offers, loadOffers, loadFavoriteOffers, onRemoveOffer }: Pr
   useEffect(() => {
     if (!displayedOffers) {
       loadFavoriteOffers();
-    }
-  }, [displayedOffers]);
-
-  useEffect(() => {
-    const notFavoriteOfferIndex = offers.findIndex((offer) => !offer.favorite);
-    if (notFavoriteOfferIndex >= 0) {
-      onRemoveOffer(notFavoriteOfferIndex);
+      setDisplayedOffers([]);
     } else {
-      setDisplayedOffers(offers);
+      const notFavoriteOffer = offers.find((offer) => !offer.favorite);
+      if (notFavoriteOffer) {
+        onRemoveOffer(notFavoriteOffer.id);
+      } else {
+        setDisplayedOffers(offers);
+      }
     }
   }, [offers]);
 

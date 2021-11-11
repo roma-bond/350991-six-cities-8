@@ -44,6 +44,11 @@ const dataReducer = (state = initialState, action: Actions): DataState => {
         nearbyOffers: [],
         reviews: [],
       };
+    case ActionType.RemoveOffer:
+      return {
+        ...state,
+        offers: state.offers.filter((offer) => offer.id !== action.payload),
+      };
     default:
       return state;
   }

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import FavoritesEmpty from '../favorites-empty/favorites-empty';
 import SignInList from '../sign-in-list/sign-in-list';
 import FavoritesList from '../favorites-list/favorites-list';
-import { fetchOffersAction } from '../../store/api-actions';
+import { fetchOffersAction, fetchFavoriteOffersAction } from '../../store/api-actions';
+import { removeOffer } from '../../store/action';
 import { ThunkAppDispatch } from '../../types/action';
 import { State } from '../../types/state';
 import { getOffers } from '../../store/data-reducer/selectors';
@@ -18,20 +19,37 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   loadOffers: () => {
     dispatch(fetchOffersAction());
   },
+  loadFavoriteOffers: () => {
+    dispatch(fetchFavoriteOffersAction());
+  },
+  onRemoveOffer: (id: number) => {
+    dispatch(removeOffer(id));
+  },
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function Favorites({ offers, loadOffers }: PropsFromRedux): JSX.Element {
-  const [favoriteOffers, setFavouriteOffers] = useState<Offer[]>([]);
+function Favorites({ offers, loadOffers, loadFavoriteOffers, onRemoveOffer }: PropsFromRedux): JSX.Element {
+  const [displayedOffers, setDisplayedOffers] = useState<Offer[] | null>(null);
 
   useEffect(() => {
-    setFavouriteOffers(offers.filter((offer) => offer.favorite));
+    if (!displayedOffers) {
+      loadFavoriteOffers();
+    }
+  }, [displayedOffers]);
+
+  useEffect(() => {
+    const notFavoriteOfferIndex = offers.findIndex((offer) => !offer.favorite);
+    if (notFavoriteOfferIndex >= 0) {
+      onRemoveOffer(notFavoriteOfferIndex);
+    } else {
+      setDisplayedOffers(offers);
+    }
   }, [offers]);
 
-  if (favoriteOffers.length === 0) {
+  if (!displayedOffers || displayedOffers.length === 0) {
     return <FavoritesEmpty onLogoClick={loadOffers} />;
   }
   return (
@@ -55,7 +73,7 @@ function Favorites({ offers, loadOffers }: PropsFromRedux): JSX.Element {
         <div className="page__favorites-container container">
           <section className="favorites">
             <h1 className="favorites__title">Saved listing</h1>
-            <FavoritesList offers={favoriteOffers} />
+            <FavoritesList offers={displayedOffers} />
           </section>
         </div>
       </main>

@@ -9,7 +9,8 @@ import {
   RequireLogout,
   LoadNearbyOffers,
   LoadReviews,
-  ResetOfferPageData
+  ResetOfferPageData,
+  RemoveOffer
 } from '../types/action';
 import { sortOffersBy, AuthorizationStatus } from '../const';
 import { Offer, Review } from '../types/offer';
@@ -60,4 +61,9 @@ export const loadReviews = (reviews: Review[]): LoadReviews => ({
 
 export const resetOfferPageData = (): ResetOfferPageData => ({
   type: ActionType.ResetOfferPageData,
+});
+
+export const removeOffer = (id: number): RemoveOffer => ({
+  type: ActionType.RemoveOffer,
+  payload: id,
 });

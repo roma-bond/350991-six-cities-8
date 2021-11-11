@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { logoutAction, fetchFavoriteOffersAction } from '../../store/api-actions';
+import { logoutAction } from '../../store/api-actions';
 import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { ThunkAppDispatch } from '../../types/action';
@@ -14,15 +14,12 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onLogout: () => {
     dispatch(logoutAction());
   },
-  loadFavoriteOffers: () => {
-    dispatch(fetchFavoriteOffersAction());
-  },
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function SignInList({ authorizationStatus, onLogout, loadFavoriteOffers }: PropsFromRedux): JSX.Element {
+function SignInList({ authorizationStatus, onLogout }: PropsFromRedux): JSX.Element {
 
   return (
     <ul className="header__nav-list">
@@ -30,7 +27,7 @@ function SignInList({ authorizationStatus, onLogout, loadFavoriteOffers }: Props
         authorizationStatus === AuthorizationStatus.Auth ? (
           <>
             <li className="header__nav-item user">
-              <Link className="header__nav-link header__nav-link--profile" to={AppRoute.Favorites} onClick={loadFavoriteOffers}>
+              <Link className="header__nav-link header__nav-link--profile" to={AppRoute.Favorites}>
                 <div className="header__avatar-wrapper user__avatar-wrapper">
                 </div>
                 <span className="header__user-name user__name">Oliver.conner@gmail.com</span>

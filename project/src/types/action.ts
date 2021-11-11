@@ -15,6 +15,7 @@ export enum ActionType {
   LoadNearbyOffers = 'LOAD_NEARBY_OFFERS',
   LoadReviews = 'LOAD_COMMENTS',
   ResetOfferPageData = 'RESET_OFFER_PAGE_DATA',
+  RemoveOffer = 'REMOVE_OFFER',
 }
 
 export type ChangeCityAction = {
@@ -65,6 +66,11 @@ export type ResetOfferPageData = {
   type: ActionType.ResetOfferPageData;
 };
 
+export type RemoveOffer = {
+  type: ActionType.RemoveOffer;
+  payload: number;
+};
+
 export type Actions =
   | ChangeCityAction
   | UpdateOfferFavoriteStatusAction
@@ -75,7 +81,8 @@ export type Actions =
   | RequireLogout
   | LoadNearbyOffers
   | LoadReviews
-  | ResetOfferPageData;
+  | ResetOfferPageData
+  | RemoveOffer;
 
 export type ThunkActionResult<R = Promise<void>> = ThunkAction<R, State, AxiosInstance, Actions>;
 

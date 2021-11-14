@@ -15,6 +15,7 @@ const dataReducer = (state = initialState, action: Actions): DataState => {
       return {
         ...state,
         offers: Array.from(state.offers).map((offer) => (offer.id === action.payload) ? {...offer, favorite: !offer.favorite} : offer),
+        currentOffer: state.currentOffer ? { ...state.currentOffer, favorite: !state.currentOffer.favorite} : null,
       };
     case ActionType.LoadOffers:
       return {

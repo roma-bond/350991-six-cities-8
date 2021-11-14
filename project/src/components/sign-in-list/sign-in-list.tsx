@@ -34,9 +34,9 @@ function SignInList({ authorizationStatus, onLogout }: PropsFromRedux): JSX.Elem
               </Link>
             </li>
             <li className="header__nav-item">
-              <a className="header__nav-link" href="#" onClick={onLogout}>
+              <Link className="header__nav-link" to={AppRoute.Main} onClick={onLogout}>
                 <span className="header__signout">Sign out</span>
-              </a>
+              </Link>
             </li>
           </>
         ) : (

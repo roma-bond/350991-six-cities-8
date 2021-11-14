@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
+import classNames from 'classnames';
 import { ThunkAppDispatch } from '../../types/action';
 import CommentForm from '../comment-form/comment-form';
 import ReviewsList from '../reviews-list/reviews-list';
@@ -8,13 +9,14 @@ import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
 import LoadingScreen from '../loading-screen/loading-screen';
 import SignInList from '../sign-in-list/sign-in-list';
-import { fetchOfferAction } from '../../store/api-actions';
+import { fetchOfferAction, submitFavoriteAction } from '../../store/api-actions';
 import { State } from '../../types/state';
 import { Offer, Review } from '../../types/offer';
 import { City, Point } from '../../types/map';
-import { AuthorizationStatus } from '../../const';
+import { AuthorizationStatus, APIRoute } from '../../const';
 import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
 import { getCurrentOffer, getNearbyOffers, getReviews } from '../../store/data-reducer/selectors';
+import browserHistory from '../../browser-history';
 
 type TParams = { id: string };
 
@@ -29,6 +31,9 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   loadServerData: (id: number) => {
     dispatch(fetchOfferAction(id));
   },
+  onFavoriteUpdate: (id: number, favorite: boolean) => {
+    dispatch(submitFavoriteAction(id, favorite));
+  },
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -36,7 +41,19 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RouteComponentProps<TParams>;
 
-function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
+function Room({ match, currentOffer, loadServerData, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
+  const bookmarkButtonClasses = currentOffer && currentOffer.favorite
+    ? classNames('property__bookmark-button', 'property__bookmark-button--active', 'button')
+    : classNames('property__bookmark-button', 'button');
+
+  const onFavoriteButtonClick = () => {
+    if (currentOffer && authorizationStatus === AuthorizationStatus.Auth) {
+      onFavoriteUpdate(currentOffer.id, !currentOffer.favorite);
+    } else {
+      browserHistory.push(APIRoute.Login);
+    }
+  };
+
   const [city, setCity] = useState<City | null>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
@@ -123,7 +140,7 @@ function Room({ match, currentOffer, loadServerData, nearbyOffers, reviews, auth
                 <h1 className="property__name">
                   {currentOffer.title}
                 </h1>
-                <button className="property__bookmark-button button" type="button">
+                <button className={bookmarkButtonClasses} type="button" onClick={onFavoriteButtonClick}>
                   <svg className="property__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
                   </svg>

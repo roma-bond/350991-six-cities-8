@@ -46,7 +46,11 @@ function Main({ offers, authorizationStatus }: PropsFromRedux): JSX.Element {
     return {id, ...offer.coordinates};
   });
 
-  const onChangeCity = (newCity: string) => setActiveCity(newCity);
+  const onChangeCity = (newCity: string) => {
+    setSelectedPoint(null);
+    setActiveCity(newCity);
+
+  };
   const onUpdateSorting = (sorting: sortOffersBy) => setSortBy(sorting);
 
   useEffect(() => {

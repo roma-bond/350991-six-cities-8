@@ -14,10 +14,9 @@ type CityOffer = {
 function FavoritesList({ offers }: FavoritesListProps): JSX.Element {
   const sortedByCityOffers = CITIES.map((city): CityOffer => ({ city, offers: []}));
   offers.forEach((offer) => {
-    const offersByCity = sortedByCityOffers.find((cityOffers) => cityOffers.city === offer.city.name);
-    if (offersByCity) {
-      offersByCity.offers.push(offer);
-    }
+    sortedByCityOffers
+      .find((cityOffers) => cityOffers.city === offer.city.name)
+      ?.offers.push(offer);
   });
 
   return (
@@ -46,6 +45,8 @@ function FavoritesList({ offers }: FavoritesListProps): JSX.Element {
                 </div>
               </li>
             );
+          } else {
+            return null;
           }
         })
       }

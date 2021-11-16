@@ -1,6 +1,7 @@
 import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
+import classNames from 'classnames';
 import { AppRoute, APIRoute, AuthorizationStatus } from '../../const';
 import { Offer } from '../../types/offer';
 import { ThunkAppDispatch } from '../../types/action';
@@ -29,7 +30,9 @@ type ConnectedComponentProps = PropsFromRedux & OfferCardProps;
 
 function OfferCard(props: ConnectedComponentProps): JSX.Element {
   const { offer, onMouseOver, onMouseEnter, onMouseOut, page, onUpdate, authorizationStatus } = props;
-  const bookmarkButtonClass = offer.favorite ? 'place-card__bookmark-button place-card__bookmark-button--active button' : 'place-card__bookmark-button button';
+  const bookmarkButtonClasses = offer.favorite
+    ? classNames('place-card__bookmark-button', 'place-card__bookmark-button--active', 'button')
+    : classNames('place-card__bookmark-button', 'button');
 
   let placeCardExtraClass = 'cities__place-card';
   let imageWrapperExtraClass = 'cities__image-wrapper';
@@ -49,11 +52,9 @@ function OfferCard(props: ConnectedComponentProps): JSX.Element {
   }
 
   const onButtonClick = () => {
-    if (authorizationStatus === AuthorizationStatus.Auth) {
-      onUpdate(offer.id, !offer.favorite);
-    } else {
-      browserHistory.push(APIRoute.Login);
-    }
+    authorizationStatus === AuthorizationStatus.Auth
+      ? onUpdate(offer.id, !offer.favorite)
+      : browserHistory.push(APIRoute.Login);
   };
 
   return (
@@ -73,7 +74,7 @@ function OfferCard(props: ConnectedComponentProps): JSX.Element {
             <b className="place-card__price-value">&euro;{offer.price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button className={bookmarkButtonClass} type="button" onClick={onButtonClick}>
+          <button className={bookmarkButtonClasses} type="button" onClick={onButtonClick}>
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>

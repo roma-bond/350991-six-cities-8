@@ -5,16 +5,18 @@ import { sortOffersBy, AuthorizationStatus } from '../const';
 import { Offer, Review } from './offer';
 
 export enum ActionType {
-  ChangeCity = 'CHANGE_CITY',
-  UpdateOfferFavoriteStatus = 'UPDATE_OFFER_FAVORITE_STATUS',
-  UpdateSorting = 'UPDATE_SORTING',
-  LoadOffers = 'LOAD_OFFERS',
-  LoadOffer = 'LOAD_OFFER',
-  RequireAuthorization = 'REQUIRE_AUTH',
-  RequireLogout = 'REQUIRE_LOGOUT',
-  LoadNearbyOffers = 'LOAD_NEARBY_OFFERS',
-  LoadReviews = 'LOAD_COMMENTS',
-  ResetOfferPageData = 'RESET_OFFER_PAGE_DATA',
+  ChangeCity = 'data/changeCity',
+  UpdateOfferFavoriteStatus = 'data/updateOfferFavoriteStatus',
+  UpdateSorting = 'data/updateSorting',
+  LoadOffers = 'data/loadOffers',
+  LoadOffer = 'data/loadOffer',
+  RequireAuthorization = 'user/requireAuthorization',
+  RequireLogout = 'user/requireLogout',
+  LoadNearbyOffers = 'data/loadNearbyOffers',
+  LoadReviews = 'data/loadComments',
+  ResetOfferPageData = 'data/resetOfferPageData',
+  RemoveOffer = 'data/removeOffer',
+  TestAction = 'test/unknownAction',
 }
 
 export type ChangeCityAction = {
@@ -65,6 +67,15 @@ export type ResetOfferPageData = {
   type: ActionType.ResetOfferPageData;
 };
 
+export type RemoveOffer = {
+  type: ActionType.RemoveOffer;
+  payload: number;
+};
+
+export type TestAction = {
+  type: ActionType.TestAction;
+};
+
 export type Actions =
   | ChangeCityAction
   | UpdateOfferFavoriteStatusAction
@@ -75,7 +86,9 @@ export type Actions =
   | RequireLogout
   | LoadNearbyOffers
   | LoadReviews
-  | ResetOfferPageData;
+  | ResetOfferPageData
+  | RemoveOffer
+  | TestAction;
 
 export type ThunkActionResult<R = Promise<void>> = ThunkAction<R, State, AxiosInstance, Actions>;
 

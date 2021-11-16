@@ -119,6 +119,7 @@ export const loginAction = ({login: email, password}: AuthData): ThunkActionResu
 
 export const logoutAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
+    dispatch(fetchOffersAction());
     api.delete(APIRoute.Logout);
     dropToken();
     dispatch(requireLogout());

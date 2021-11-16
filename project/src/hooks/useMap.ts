@@ -28,10 +28,13 @@ function useMap(
       );
 
       instance.addLayer(layer);
+      // instance.flyTo([city.lat, city.lng], city.zoom);
 
       setMap(instance);
     } else if (selectedPoint) {
-      map?.setView([selectedPoint.lat, selectedPoint.lng], selectedPoint.zoom);
+      map?.flyTo([selectedPoint.lat, selectedPoint.lng], selectedPoint.zoom);
+    } else if (city) {
+      map?.flyTo([city.lat, city.lng], 12);
     }
   }, [mapRef, map, city, selectedPoint]);
 

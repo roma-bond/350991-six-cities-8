@@ -129,6 +129,7 @@ export const submitReviewAction = (offerId: number, {text: comment, rating}: Rev
   async (dispatch, _getState, api) => {
     const { data } = await api.post<{reviews: Review[]}>(`${APIRoute.Reviews}/${offerId}`, {comment, rating});
     const convertedReviewsData = normalizeReviewsData(data);
+    // convertedReviewsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     dispatch(loadReviews(convertedReviewsData));
   };
 

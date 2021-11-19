@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { AppRoute, APIRoute, AuthorizationStatus } from '../../const';
 import { Offer } from '../../types/offer';
 import { ThunkAppDispatch } from '../../types/action';
-import { submitFavoriteAction } from '../../store/api-actions';
+import { submitFavoriteAction, fetchOfferAction } from '../../store/api-actions';
 import browserHistory from '../../browser-history';
 
 type OfferCardProps = {
@@ -21,6 +21,9 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onUpdate: (id: number, favorite: boolean) => {
     dispatch(submitFavoriteAction(id, favorite));
   },
+  loadServerData: (id: number) => {
+    dispatch(fetchOfferAction(id));
+  },
 });
 
 const connector = connect(null, mapDispatchToProps);
@@ -29,7 +32,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & OfferCardProps;
 
 function OfferCard(props: ConnectedComponentProps): JSX.Element {
-  const { offer, onMouseOver, onMouseEnter, onMouseOut, page, onUpdate, authorizationStatus } = props;
+  const { offer, onMouseOver, onMouseEnter, onMouseOut, loadServerData, page, onUpdate, authorizationStatus } = props;
   const bookmarkButtonClasses = offer.favorite
     ? classNames('place-card__bookmark-button', 'place-card__bookmark-button--active', 'button')
     : classNames('place-card__bookmark-button', 'button');
@@ -88,7 +91,7 @@ function OfferCard(props: ConnectedComponentProps): JSX.Element {
           </div>
         </div>
         <h2 className="place-card__name">
-          <Link to={`${AppRoute.Offer}/${offer.id}`}>{offer.title}</Link>
+          <Link to={`${AppRoute.Offer}/${offer.id}`} onClick={() => loadServerData(offer.id)}>{offer.title}</Link>
         </h2>
         <p className="place-card__type">{offer.type}</p>
       </div>

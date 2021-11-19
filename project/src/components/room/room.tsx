@@ -9,7 +9,7 @@ import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
 import LoadingScreen from '../loading-screen/loading-screen';
 import SignInList from '../sign-in-list/sign-in-list';
-import { fetchOfferAction, submitFavoriteAction } from '../../store/api-actions';
+import { submitFavoriteAction } from '../../store/api-actions';
 import { State } from '../../types/state';
 import { Offer, Review } from '../../types/offer';
 import { City, Point } from '../../types/map';
@@ -28,9 +28,6 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  loadServerData: (id: number) => {
-    dispatch(fetchOfferAction(id));
-  },
   onFavoriteUpdate: (id: number, favorite: boolean) => {
     dispatch(submitFavoriteAction(id, favorite));
   },
@@ -41,7 +38,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RouteComponentProps<TParams>;
 
-function Room({ match, currentOffer, loadServerData, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
+function Room({ currentOffer, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
   const bookmarkButtonClasses = currentOffer && currentOffer.favorite
     ? classNames('property__bookmark-button', 'property__bookmark-button--active', 'button')
     : classNames('property__bookmark-button', 'button');
@@ -80,10 +77,15 @@ function Room({ match, currentOffer, loadServerData, onFavoriteUpdate, nearbyOff
         ...currentOffer.coordinates,
       }));
       setDisplayedReviews(reviews);
-    } else {
-      loadServerData(Number(match.params.id));
     }
   }, [currentOffer, reviews, selectedPoint]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [currentOffer]);
 
   const onListItemHover = React.useCallback((listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;

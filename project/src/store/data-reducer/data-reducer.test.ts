@@ -7,7 +7,7 @@ import {
   loadReviews,
   resetOfferPageData,
   removeOffer
- } from '../action';
+} from '../action';
 import { mockState, mockOffers, mockReviews } from '../../utils/mocks';
 import { ActionType } from '../../types/action';
 

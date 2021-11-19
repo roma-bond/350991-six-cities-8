@@ -3,8 +3,7 @@ import { AuthorizationStatus } from '../../const';
 import { ActionType } from '../../types/action';
 import {
   requireAuthorization
- } from '../action';
-import { mockState, mockOffers, mockReviews } from '../../utils/mocks';
+} from '../action';
 
 describe('Reducer: user', () => {
 it('without additional parameters should return initial state', () => {

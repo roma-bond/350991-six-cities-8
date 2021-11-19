@@ -6,7 +6,7 @@ import {
 } from '../action';
 
 describe('Reducer: user', () => {
-it('without additional parameters should return initial state', () => {
+  it('without additional parameters should return initial state', () => {
     expect(userReducer(undefined, {type: ActionType.TestAction}))
       .toEqual({authorizationStatus: AuthorizationStatus.Unknown});
   });

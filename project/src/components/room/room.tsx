@@ -9,7 +9,7 @@ import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
 import LoadingScreen from '../loading-screen/loading-screen';
 import SignInList from '../sign-in-list/sign-in-list';
-import { submitFavoriteAction } from '../../store/api-actions';
+import { submitFavoriteAction, fetchOfferAction } from '../../store/api-actions';
 import { State } from '../../types/state';
 import { Offer, Review } from '../../types/offer';
 import { City, Point } from '../../types/map';
@@ -28,6 +28,9 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  loadServerData: (id: number) => {
+    dispatch(fetchOfferAction(id));
+  },
   onFavoriteUpdate: (id: number, favorite: boolean) => {
     dispatch(submitFavoriteAction(id, favorite));
   },
@@ -38,7 +41,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RouteComponentProps<TParams>;
 
-function Room({ currentOffer, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
+function Room({ match, currentOffer,loadServerData, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
   const bookmarkButtonClasses = currentOffer && currentOffer.favorite
     ? classNames('property__bookmark-button', 'property__bookmark-button--active', 'button')
     : classNames('property__bookmark-button', 'button');
@@ -86,6 +89,11 @@ function Room({ currentOffer, onFavoriteUpdate, nearbyOffers, reviews, authoriza
       behavior: 'smooth',
     });
   }, [currentOffer]);
+
+  useEffect(() => {
+    const newOfferId = Number(match.params.id);
+    loadServerData(newOfferId);
+  }, [match.params.id]);
 
   const onListItemHover = React.useCallback((listItemId: number) => {
     const currentPoint = points.find((point) => point.id === listItemId) || null;

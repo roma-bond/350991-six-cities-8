@@ -1,12 +1,18 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { submitReviewAction } from '../../store/api-actions';
+import { getReviews } from '../../store/data-reducer/selectors';
 import { ThunkAppDispatch } from '../../types/action';
 import { ReviewPost } from '../../types/offer';
+import { State } from '../../types/state';
 
 type CommentFormProps = {
   offerId: number;
 }
+
+const mapStateToProps = (state: State) => ({
+  reviews: getReviews(state),
+});
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onSubmit: (id: number, post: ReviewPost) => {
@@ -14,14 +20,19 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   },
 });
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & CommentFormProps;
 
-function CommentForm({ offerId, onSubmit }: ConnectedComponentProps): JSX.Element {
+function CommentForm({ offerId, onSubmit, reviews }: ConnectedComponentProps): JSX.Element {
   const [reviewText, setReviewText] = useState('');
-  const [rating, setRating] = useState('0');
+  const [rating, setRating] = useState('1');
+
+  useEffect(() => {
+    setReviewText('');
+    setRating('1');
+  }, [reviews]);
 
   const onRatingChange = (evt: ChangeEvent<HTMLInputElement>) => setRating(evt.target.value);
 

@@ -12,7 +12,7 @@ import {
   ResetOfferPageData,
   RemoveOffer
 } from '../types/action';
-import { sortOffersBy, AuthorizationStatus } from '../const';
+import { SortOffersBy, AuthorizationStatus } from '../const';
 import { Offer, Review } from '../types/offer';
 
 export const changeCity = (city: string): ChangeCityAction => ({
@@ -25,7 +25,7 @@ export const updateOfferFavoriteStatus = (id: number): UpdateOfferFavoriteStatus
   payload: id,
 });
 
-export const updateSorting = (sorting: sortOffersBy): UpdateSortingAction => ({
+export const updateSorting = (sorting: SortOffersBy): UpdateSortingAction => ({
   type: ActionType.UpdateSorting,
   payload: sorting,
 });

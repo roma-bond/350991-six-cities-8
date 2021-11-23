@@ -8,7 +8,7 @@ import { createAPI } from './services/api';
 import { rootReducer } from './store/root-reducer';
 import { ThunkAppDispatch } from './types/action';
 import App from './components/app/app';
-import { fetchOffersAction } from './store/api-actions';
+import { checkAuthAction } from './store/api-actions';
 import { requireAuthorization } from './store/action';
 import { AuthorizationStatus } from './const';
 
@@ -23,7 +23,7 @@ export const store = createStore(
   ),
 );
 
-(store.dispatch as ThunkAppDispatch)(fetchOffersAction());
+(store.dispatch as ThunkAppDispatch)(checkAuthAction());
 
 ReactDOM.render(
   <React.StrictMode>

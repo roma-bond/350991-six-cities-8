@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { sortOffersBy } from '../../const';
+import { SortOffersBy } from '../../const';
 import OffersSortingOption from '../offers-sorting-option/offers-sorting-option';
 
 type OffersSortingProps = {
-  onUpdateSorting: (activeSortType: sortOffersBy) => void;
+  onUpdateSorting: (activeSortType: SortOffersBy) => void;
 };
 
 function OffersSorting({ onUpdateSorting }: OffersSortingProps): JSX.Element {
-  const [activeSortType, setActiveSortType] = useState(sortOffersBy.popular);
+  const [activeSortType, setActiveSortType] = useState(SortOffersBy.Popular);
   const [isSortingVisible, setIsSortingVisible] = useState(false);
 
   const sortingClassList = isSortingVisible
@@ -18,7 +18,7 @@ function OffersSorting({ onUpdateSorting }: OffersSortingProps): JSX.Element {
     onUpdateSorting(activeSortType);
   }, [activeSortType]);
 
-  const onOptionClickHandler = (sortType: sortOffersBy, isNotActiveOption: boolean) => {
+  const onOptionClickHandler = (sortType: SortOffersBy, isNotActiveOption: boolean) => {
     if (isNotActiveOption) {
       setActiveSortType(sortType);
     }
@@ -39,7 +39,7 @@ function OffersSorting({ onUpdateSorting }: OffersSortingProps): JSX.Element {
       </span>
       <ul className={sortingClassList}>
         {
-          Object.values(sortOffersBy).map((sortType) => (
+          Object.values(SortOffersBy).map((sortType) => (
             <OffersSortingOption
               key={`Sort type is by ${sortType}`}
               sortType={sortType}

@@ -9,7 +9,7 @@ import OffersMap from '../offers-map/offers-map';
 import OffersList from '../offers-list/offers-list';
 import LoadingScreen from '../loading-screen/loading-screen';
 import SignInList from '../sign-in-list/sign-in-list';
-import { submitFavoriteAction, fetchOfferAction } from '../../store/api-actions';
+import { submitFavoriteAction, fetchOfferAction, fetchNearbyOffersAction } from '../../store/api-actions';
 import { State } from '../../types/state';
 import { Offer, Review } from '../../types/offer';
 import { City, Point } from '../../types/map';
@@ -30,6 +30,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   loadServerData: (id: number) => {
     dispatch(fetchOfferAction(id));
+    dispatch(fetchNearbyOffersAction(id));
   },
   onFavoriteUpdate: (id: number, favorite: boolean) => {
     dispatch(submitFavoriteAction(id, favorite));
@@ -41,7 +42,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & RouteComponentProps<TParams>;
 
-function Room({ match, currentOffer,loadServerData, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
+function Room({ match, currentOffer, loadServerData, onFavoriteUpdate, nearbyOffers, reviews, authorizationStatus }: ConnectedComponentProps): JSX.Element {
   const bookmarkButtonClasses = currentOffer && currentOffer.favorite
     ? classNames('property__bookmark-button', 'property__bookmark-button--active', 'button')
     : classNames('property__bookmark-button', 'button');
@@ -88,7 +89,7 @@ function Room({ match, currentOffer,loadServerData, onFavoriteUpdate, nearbyOffe
       top: 0,
       behavior: 'smooth',
     });
-  }, [currentOffer]);
+  }, [currentOffer?.title]);
 
   useEffect(() => {
     const newOfferId = Number(match.params.id);
@@ -134,7 +135,7 @@ function Room({ match, currentOffer,loadServerData, onFavoriteUpdate, nearbyOffe
               {
                 currentOffer.images.map((image: string) => (
                   <div key={`${image}-${currentOffer.id}`} className="property__image-wrapper">
-                    <img className="property__image" src={image} alt="Photo studio" />
+                    <img className="property__image" src={image} alt="Property view" />
                   </div>
                 ))
               }
@@ -237,6 +238,8 @@ function Room({ match, currentOffer,loadServerData, onFavoriteUpdate, nearbyOffe
                   onListItemHover={onListItemHover}
                   offersListType={'offer'}
                   onListItemOut={onListItemOut}
+                  authorizationStatus={authorizationStatus}
+                  nearbyId={currentOffer.id}
                 />
               )
             }

@@ -6,19 +6,21 @@ import CitiesList from '../cities-list/cities-list';
 import OffersList from '../offers-list/offers-list';
 import OffersMap from '../offers-map/offers-map';
 import SignInList from '../sign-in-list/sign-in-list';
-import { CITIES, DEFAULT_CITY_SETTING, sortOffersBy } from '../../const';
+import LoadingScreen from '../loading-screen/loading-screen';
+import { CITIES, DEFAULT_CITY_SETTING, SortOffersBy } from '../../const';
 import { getSortedOffers, getCityMapCoordinates } from '../../store-utilities/offers';
 import { City, Point } from '../../types/map';
 import { State } from '../../types/state';
 import { ThunkAppDispatch } from '../../types/action';
 import { Offer } from '../../types/offer';
-import { getOffers } from '../../store/data-reducer/selectors';
+import { getOffers, getLoadedDataStatus } from '../../store/data-reducer/selectors';
 import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
 import { fetchOffersAction } from '../../store/api-actions';
 
 const mapStateToProps = (state: State) => ({
   offers: getOffers(state),
   authorizationStatus: getAuthorizationStatus(state),
+  isDataLoaded: getLoadedDataStatus(state),
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
@@ -31,13 +33,12 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function Main({ offers, authorizationStatus }: PropsFromRedux): JSX.Element {
+function Main({ offers, authorizationStatus, loadOffers, isDataLoaded }: PropsFromRedux): JSX.Element {
   const [activeCity, setActiveCity] = useState('Paris');
-  const [sortBy, setSortBy] = useState<sortOffersBy>(sortOffersBy.popular);
+  const [sortBy, setSortBy] = useState<SortOffersBy>(SortOffersBy.Popular);
   const [displayedOffers, setDidplayedOffers] = useState<Offer[]>([]);
   const [cityMapCoordinates, setСityMapCoordinates] = useState<City>(DEFAULT_CITY_SETTING);
-
-  let cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
+  const [cityOffersAmount, setCityOffersAmount] = useState(offers.filter((offer) => offer.city.name === activeCity).length);
 
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
@@ -49,14 +50,18 @@ function Main({ offers, authorizationStatus }: PropsFromRedux): JSX.Element {
   const onChangeCity = (newCity: string) => {
     setSelectedPoint(null);
     setActiveCity(newCity);
-
   };
-  const onUpdateSorting = (sorting: sortOffersBy) => setSortBy(sorting);
+
+  const onUpdateSorting = (sorting: SortOffersBy) => setSortBy(sorting);
+
+  useEffect(() => {
+    loadOffers();
+  }, []);
 
   useEffect(() => {
     setDidplayedOffers(getSortedOffers(activeCity, offers, sortBy));
     setСityMapCoordinates(getCityMapCoordinates(activeCity, offers));
-    cityOffersAmount = offers.filter((offer) => offer.city.name === activeCity).length;
+    setCityOffersAmount(offers.filter((offer) => offer.city.name === activeCity).length);
   }, [offers, activeCity, sortBy]);
 
   const onListItemHover = (listItemId: number) => {
@@ -65,17 +70,23 @@ function Main({ offers, authorizationStatus }: PropsFromRedux): JSX.Element {
     setSelectedPoint(currentPoint);
   };
 
+  if (!isDataLoaded) {
+    return (
+      <LoadingScreen />
+    );
+  }
+
   if (offers.length === 0) {
     return <MainEmpty />;
   }
 
   return (
-    <div className="page page--gray page--main">
+    <div className="page page--gray page--main" id="top">
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link header__logo-link--active">
+              <a className="header__logo-link header__logo-link--active" href="#top">
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
               </a>
             </div>

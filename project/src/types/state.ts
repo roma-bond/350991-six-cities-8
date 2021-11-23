@@ -1,5 +1,5 @@
 import { Offer, Review } from './offer';
-import { sortOffersBy } from '../const';
+import { SortOffersBy } from '../const';
 import { AuthorizationStatus } from '../const';
 import { RootState } from '../store/root-reducer';
 
@@ -16,7 +16,7 @@ export type UserState = {
 };
 
 export type FilterState = {
-  sortBy: sortOffersBy;
+  sortBy: SortOffersBy;
 };
 
 export type State = RootState;

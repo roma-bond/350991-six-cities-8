@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { AppRoute, APIRoute, AuthorizationStatus } from '../../const';
 import { Offer } from '../../types/offer';
 import { ThunkAppDispatch } from '../../types/action';
-import { submitFavoriteAction } from '../../store/api-actions';
+import { submitFavoriteAction, fetchNearbyOffersAction } from '../../store/api-actions';
 import browserHistory from '../../browser-history';
 
 type OfferCardProps = {
@@ -15,11 +15,18 @@ type OfferCardProps = {
   onMouseOut?: () => void;
   page: string;
   authorizationStatus?: AuthorizationStatus;
+  nearbyId?: number;
 }
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onUpdate: (id: number, favorite: boolean) => {
-    dispatch(submitFavoriteAction(id, favorite));
+  onUpdate: (id: number, favorite: boolean, page?: string, nearbyId?: number) => {
+    if (!page) {
+      dispatch(submitFavoriteAction(id, favorite));
+    } else if (page === 'offer' && nearbyId) {
+      dispatch(submitFavoriteAction(id, favorite)).then(() => {
+        dispatch(fetchNearbyOffersAction(nearbyId));
+      });
+    }
   },
 });
 
@@ -29,7 +36,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type ConnectedComponentProps = PropsFromRedux & OfferCardProps;
 
 function OfferCard(props: ConnectedComponentProps): JSX.Element {
-  const { offer, onMouseOver, onMouseEnter, onMouseOut, page, onUpdate, authorizationStatus } = props;
+  const { offer, onMouseOver, onMouseEnter, onMouseOut, page, onUpdate, authorizationStatus, nearbyId } = props;
   const bookmarkButtonClasses = offer.favorite
     ? classNames('place-card__bookmark-button', 'place-card__bookmark-button--active', 'button')
     : classNames('place-card__bookmark-button', 'button');
@@ -52,9 +59,15 @@ function OfferCard(props: ConnectedComponentProps): JSX.Element {
   }
 
   const onButtonClick = () => {
-    authorizationStatus === AuthorizationStatus.Auth
-      ? onUpdate(offer.id, !offer.favorite)
-      : browserHistory.push(APIRoute.Login);
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      if (page === 'offer') {
+        onUpdate(offer.id, !offer.favorite, 'offer', nearbyId);
+      } else {
+        onUpdate(offer.id, !offer.favorite);
+      }
+    } else {
+      browserHistory.push(APIRoute.Login);
+    }
   };
 
   return (
@@ -64,9 +77,9 @@ function OfferCard(props: ConnectedComponentProps): JSX.Element {
           <span>Premium</span>
         </div>}
       <div className={`${imageWrapperExtraClass} place-card__image-wrapper`}>
-        <a href="#">
-          <img className="place-card__image" src={offer.images[0]} width={imageWidth} height={imageHeight} alt="Place image" />
-        </a>
+        <span>
+          <img className="place-card__image" src={offer.images[0]} width={imageWidth} height={imageHeight} alt="Place view" />
+        </span>
       </div>
       <div className={`${cardInfoExtraClass} place-card__info`}>
         <div className="place-card__price-wrapper">

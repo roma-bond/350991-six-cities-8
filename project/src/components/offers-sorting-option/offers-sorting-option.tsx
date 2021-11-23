@@ -1,10 +1,10 @@
 import classNames from 'classnames';
-import { sortOffersBy } from '../../const';
+import { SortOffersBy } from '../../const';
 
 type OffersSortingOptionProps = {
-  sortType: sortOffersBy;
-  activeSortType: sortOffersBy;
-  onClickHandler: (sortType: sortOffersBy, isNotActiveOption: boolean) => void;
+  sortType: SortOffersBy;
+  activeSortType: SortOffersBy;
+  onClickHandler: (sortType: SortOffersBy, isNotActiveOption: boolean) => void;
 }
 
 function OffersSortingOption({ sortType, activeSortType, onClickHandler }: OffersSortingOptionProps): JSX.Element {

@@ -1,32 +1,25 @@
 import {connect, ConnectedProps} from 'react-redux';
-import { Router as BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Router as BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Main from '../main/main';
 import SignIn from '../sign-in/sign-in';
 import Favorites from '../favorites/favorites';
 import Room from '../room/room';
 import NotFound from '../not-found/not-found';
 import PrivateRoute from '../private-route/private-route';
-import LoadingScreen from '../loading-screen/loading-screen';
-import { getLoadedDataStatus } from '../../store/data-reducer/selectors';
-import { AppRoute } from '../../const';
+import { getAuthorizationStatus } from '../../store/user-reducer/selectors';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import { State } from '../../types/state';
 import browserHistory from '../../browser-history';
 
 const mapStateToProps = (state: State) => ({
-  isDataLoaded: getLoadedDataStatus(state),
+  authorizationStatus: getAuthorizationStatus(state),
 });
 
 const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function App(props: PropsFromRedux): JSX.Element {
-  const { isDataLoaded } = props;
-
-  if (!isDataLoaded) {
-    return (
-      <LoadingScreen />
-    );
-  }
+  const { authorizationStatus } = props;
 
   return (
     <BrowserRouter history={browserHistory}>
@@ -34,9 +27,15 @@ function App(props: PropsFromRedux): JSX.Element {
         <Route exact path={AppRoute.Main}>
           <Main />
         </Route>
-        <Route exact path={AppRoute.Login}>
-          <SignIn />
-        </Route>
+        <Route
+          exact
+          path={AppRoute.Login}
+          render={() => (
+            authorizationStatus !== AuthorizationStatus.Auth
+              ? <SignIn />
+              : <Redirect to={AppRoute.Main}/>
+          )}
+        />
         <PrivateRoute
           exact
           path={AppRoute.Favorites}

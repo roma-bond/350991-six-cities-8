@@ -28,7 +28,6 @@ function useMap(
       );
 
       instance.addLayer(layer);
-      // instance.flyTo([city.lat, city.lng], city.zoom);
 
       setMap(instance);
     } else if (selectedPoint) {

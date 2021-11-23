@@ -144,7 +144,6 @@ export const submitReviewAction = (offerId: number, {text: comment, rating}: Rev
 export const submitFavoriteAction = (offerId: number, favorite: boolean): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const favoriteNum = favorite ? 1 : 0;
-    console.log(`${APIRoute.Favorite}/${offerId}/${favoriteNum}`);
     const { data } = await api.post<any>(`${APIRoute.Favorite}/${offerId}/${favoriteNum}`);
     dispatch(updateOfferFavoriteStatus(data.id));
   };

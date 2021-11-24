@@ -8,12 +8,12 @@ function MainEmpty(): JSX.Element {
   const onChangeCity = (newCity: string) => setActiveCity(newCity);
 
   return (
-    <div className="page page--gray page--main">
+    <div className="page page--gray page--main" id="top">
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link header__logo-link--active">
+              <a className="header__logo-link header__logo-link--active" href="#top">
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
               </a>
             </div>

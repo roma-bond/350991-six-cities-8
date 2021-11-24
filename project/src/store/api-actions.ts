@@ -15,8 +15,7 @@ import { AuthData } from '../types/auth-data';
 import browserHistory from '../browser-history';
 import { ReviewPost } from '../types/offer';
 
-const normalizeOffersData = (data: any): Offer[] => data.map((serverOffer: any) => ({
-  // ...serverOffer,
+const normalizeOffersData = (data: unknown[]): Offer[] => data.map((serverOffer: any) => ({
   id: serverOffer.id,
   city: serverOffer.city,
   images: serverOffer.images,
@@ -62,8 +61,10 @@ const normalizeOfferData = (data: any) => ({
   },
 });
 
-const normalizeReviewsData = (data: any): Review[] => data.map((review: any) => ({
-  ...review,
+const normalizeReviewsData = (data: unknown[]): Review[] => data.map((review: any) => ({
+  id: review.id,
+  rating: review.rating,
+  date: review.date,
   text: review.comment,
   authorId: review.user.id,
   authorIsPro: review.user.is_pro,
@@ -74,7 +75,7 @@ const normalizeReviewsData = (data: any): Review[] => data.map((review: any) => 
 export const fetchOffersAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     try {
-      const { data } = await api.get<Offer[]>(APIRoute.Offers);
+      const { data } = await api.get<unknown[]>(APIRoute.Offers);
       if (data) {
         const convertedData = normalizeOffersData(data);
         dispatch(loadOffers(convertedData));
@@ -90,12 +91,20 @@ export const fetchOfferAction = (id: number): ThunkActionResult =>
       const { data: offerData } = await api.get<Offer>(`${APIRoute.Offers}/${id}`);
       const convertedOfferData = normalizeOfferData(offerData);
       dispatch(loadOffer(convertedOfferData));
-      const { data: nearbyData } = await api.get<Offer[]>(`${APIRoute.Offers}/${id}/nearby`);
-      const convertedNearbyData = normalizeOffersData(nearbyData);
-      dispatch(loadNearbyOffers(convertedNearbyData));
-      const { data: reviewsData } = await api.get<Review[]>(`${APIRoute.Reviews}/${id}`);
+      const { data: reviewsData } = await api.get<unknown[]>(`${APIRoute.Reviews}/${id}`);
       const convertedReviewsData = normalizeReviewsData(reviewsData);
       dispatch(loadReviews(convertedReviewsData));
+    } catch (error) {
+      browserHistory.push(APIRoute.NotFound);
+    }
+  };
+
+export const fetchNearbyOffersAction = (id: number): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    try {
+      const { data: nearbyData } = await api.get<unknown[]>(`${APIRoute.Offers}/${id}/nearby`);
+      const convertedNearbyData = normalizeOffersData(nearbyData);
+      dispatch(loadNearbyOffers(convertedNearbyData));
     } catch (error) {
       browserHistory.push(APIRoute.NotFound);
     }
@@ -127,9 +136,8 @@ export const logoutAction = (): ThunkActionResult =>
 
 export const submitReviewAction = (offerId: number, {text: comment, rating}: ReviewPost): ThunkActionResult =>
   async (dispatch, _getState, api) => {
-    const { data } = await api.post<{reviews: Review[]}>(`${APIRoute.Reviews}/${offerId}`, {comment, rating});
+    const { data } = await api.post<unknown[]>(`${APIRoute.Reviews}/${offerId}`, {comment, rating});
     const convertedReviewsData = normalizeReviewsData(data);
-    // convertedReviewsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     dispatch(loadReviews(convertedReviewsData));
   };
 

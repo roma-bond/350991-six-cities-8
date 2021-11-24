@@ -1,4 +1,6 @@
 import { MouseEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../../const';
 
 type CityTabProps = {
   city: string;
@@ -14,9 +16,9 @@ function CityTab({ city, classValue, onClickHandler }: CityTabProps): JSX.Elemen
 
   return (
     <li className="locations__item">
-      <a onClick={handleClick} className={classValue} href="#">
+      <Link onClick={handleClick} className={classValue} to={AppRoute.Main}>
         <span>{city}</span>
-      </a>
+      </Link>
     </li>
   );
 }

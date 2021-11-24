@@ -11,11 +11,11 @@ export enum AuthorizationStatus {
   Unknown = 'UNKNOWN'
 }
 
-export enum sortOffersBy {
-  popular = 'Popular',
-  cheap = 'Price: low to high',
-  expensive = 'Price: high to low',
-  topRated = 'Top rated first',
+export enum SortOffersBy {
+  Popular = 'Popular',
+  Cheap = 'Price: low to high',
+  Expensive = 'Price: high to low',
+  TopRated = 'Top rated first',
 }
 
 export const CITIES = [
@@ -42,3 +42,5 @@ export enum APIRoute {
   NotFound = '/page_not_found',
   Favorite = '/favorite',
 }
+
+export const MAX_REVIEWS = 10;

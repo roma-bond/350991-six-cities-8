@@ -40,7 +40,7 @@ function SignIn(props: ConnectedComponentProps): JSX.Element {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <Link to="/" className="header__logo-link">
+              <Link to={AppRoute.Main} className="header__logo-link">
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
               </Link>
             </div>

@@ -8,10 +8,11 @@ type OffersListProps = {
   onListItemHover: (listItemId: number) => void;
   offersListType: string;
   onListItemOut?: () => void;
-  authorizationStatus?: AuthorizationStatus,
+  authorizationStatus?: AuthorizationStatus;
+  nearbyId?: number;
 }
 
-function OffersList({ offers, onListItemHover, offersListType, onListItemOut, authorizationStatus }: OffersListProps): JSX.Element {
+function OffersList({ offers, onListItemHover, offersListType, onListItemOut, authorizationStatus, nearbyId }: OffersListProps): JSX.Element {
   const [, setActiveId] = useState(offers.length > 0 ? offers[0].id : null);
 
   let extraListClass = '';
@@ -32,8 +33,9 @@ function OffersList({ offers, onListItemHover, offersListType, onListItemOut, au
             onMouseOver={() => setActiveId(offer.id)}
             onMouseEnter={() => onListItemHover(offer.id)}
             onMouseOut={onListItemOut}
-            page='main'
+            page={offersListType}
             authorizationStatus={authorizationStatus}
+            nearbyId={nearbyId}
           />),
         )
       }

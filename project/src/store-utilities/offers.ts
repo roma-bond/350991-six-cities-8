@@ -1,15 +1,15 @@
-import { sortOffersBy } from '../const';
+import { SortOffersBy } from '../const';
 import { Offer } from '../types/offer';
 import { City } from '../types/map';
 
-export const getSortedOffers = (city: string, offers: Offer[], sortBy: sortOffersBy): Offer[] => {
+export const getSortedOffers = (city: string, offers: Offer[], sortBy: SortOffersBy): Offer[] => {
   const displayedOffers = offers.filter((offer) => offer.city.name === city);
   switch (sortBy) {
-    case sortOffersBy.cheap:
+    case SortOffersBy.Cheap:
       return displayedOffers.sort((a, b) => a.price - b.price);
-    case sortOffersBy.expensive:
+    case SortOffersBy.Expensive:
       return displayedOffers.sort((a, b) => b.price - a.price);
-    case sortOffersBy.topRated:
+    case SortOffersBy.TopRated:
       return displayedOffers.sort((a, b) => b.rating - a.rating);
     default:
       return displayedOffers;

@@ -1,7 +1,7 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { AxiosInstance } from 'axios';
 import { State } from '../types/state';
-import { sortOffersBy, AuthorizationStatus } from '../const';
+import { SortOffersBy, AuthorizationStatus } from '../const';
 import { Offer, Review } from './offer';
 
 export enum ActionType {
@@ -31,7 +31,7 @@ export type UpdateOfferFavoriteStatusAction = {
 
 export type UpdateSortingAction = {
   type: ActionType.UpdateSorting;
-  payload: sortOffersBy;
+  payload: SortOffersBy;
 };
 
 export type LoadOffers = {

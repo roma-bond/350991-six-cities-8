@@ -11,7 +11,7 @@ import { requireAuthorization } from './store/action';
 import { AuthorizationStatus } from './const';
 
 const api = createAPI(
-  () => {store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth))},
+  () => store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth)),
 );
 
 export const store = createStore(
